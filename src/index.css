@@ -1,0 +1,52 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: 'Inter', system-ui, sans-serif;
+
+  /* Brand palette — Strategic Corporate Core */
+  --color-primary:    #1E3A8A;
+  --color-primary-dk: #162d6e;
+  --color-primary-lt: #2d4fa8;
+  --color-primary-50: #eff3ff;
+  --color-primary-100:#dce5fb;
+
+  --color-secondary:    #64748B;
+  --color-secondary-lt: #94a3b8;
+  --color-secondary-50: #f1f5f9;
+
+  --color-tertiary:    #0EA5E9;
+  --color-tertiary-dk: #0284c7;
+  --color-tertiary-lt: #38bdf8;
+  --color-tertiary-50: #e0f2fe;
+
+  --color-neutral: #F8FAFC;
+  --color-neutral-100: #f1f5f9;
+  --color-neutral-200: #e2e8f0;
+  --color-neutral-300: #cbd5e1;
+  --color-neutral-400: #94a3b8;
+  --color-neutral-700: #334155;
+  --color-neutral-800: #1e293b;
+  --color-neutral-900: #0f172a;
+
+  /* Status */
+  --color-status-recibido:   #0EA5E9;
+  --color-status-gestion:    #f59e0b;
+  --color-status-resuelto:   #10b981;
+  --color-status-cerrado:    #64748B;
+  --color-status-rechazado:  #ef4444;
+}
+
+:root {
+  font-family: 'Inter', system-ui, sans-serif;
+  background-color: #F8FAFC;
+  color: #1e293b;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #1E3A8A transparent;
+}
+*::-webkit-scrollbar { width: 4px; height: 4px; }
+*::-webkit-scrollbar-thumb { background: #1E3A8A; border-radius: 4px; }
+*::-webkit-scrollbar-track { background: transparent; }

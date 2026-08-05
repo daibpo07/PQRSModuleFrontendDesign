@@ -1,0 +1,10 @@
+{
+  "description": "Streamline PQRS management with a user-friendly interface for tracking requests and statuses, featuring a sidebar for easy navigation and user session panels.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
