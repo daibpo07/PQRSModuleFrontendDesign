@@ -6,8 +6,15 @@ import TableView from "./components/TableView"
 import FormNew from "./components/FormNew"
 import DetailView from "./components/DetailView"
 import EnviosIndividuales from "./components/EnviosIndividuales"
+import EnviosMasivos from "./components/EnviosMasivos"
 
-export type View = "dashboard" | "table" | "new" | "detail" | "mensajes"
+export type View =
+  | "dashboard"
+  | "table"
+  | "new"
+  | "detail"
+  | "mensajes"
+  | "masivos"
 
 export interface Radicado {
   id: string
@@ -18,10 +25,10 @@ export interface Radicado {
   prioridad: "Alta" | "Media" | "Baja"
   fecha: string
   fechaRespuesta?: string
-  peticionario: { nombre: string cedula: string }
+  peticionario: { nombre: string; cedula: string }
   dependencia: string
   canal: string
-  seguimientos: { fecha: string autor: string nota: string }[]
+  seguimientos: { fecha: string; autor: string; nota: string }[]
 }
 
 const initialRadicados: Radicado[] = [
@@ -266,6 +273,7 @@ export default function App() {
             <DetailView radicado={selected} onBack={() => setView("table")} />
           )}
           {view === "mensajes" && <EnviosIndividuales />}
+          {view === "masivos" && <EnviosMasivos />}
         </main>
       </div>
     </div>
