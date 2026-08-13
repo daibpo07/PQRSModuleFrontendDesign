@@ -1,4 +1,15 @@
-import type { BotonPlantilla, Canal } from "./EnviosMasivosData"
+/* ─────────────────────────────────────────────
+   Vista previa de mensaje por dispositivo.
+   Componente compartido: define su propia unión
+   de canales para no acoplarse a ningún módulo.
+───────────────────────────────────────────── */
+export type CanalPreview = "whatsapp" | "instagram" | "sms" | "email" | "push"
+
+export interface BotonPreview {
+  tipo: string
+  texto: string
+  url?: string
+}
 
 /* ─────────────────────────────────────────────
    Datos de ejemplo usados en las vistas previas
@@ -33,26 +44,28 @@ export function renderCuerpo(text: string, conDatos: boolean) {
 }
 
 interface Props {
-  canal: Canal
+  canal: CanalPreview
   cuerpo: string
   conDatos: boolean
   asunto?: string
   encabezado?: string
   pie?: string
-  botones?: BotonPlantilla[]
+  botones?: BotonPreview[]
 }
 
 /* ─────────────────────────────────────────────
    Botones de plantilla
 ───────────────────────────────────────────── */
-function BotonesPreview({ botones, color }: { botones: BotonPlantilla[]; color: string }) {
+function BotonesPreview({ botones, color }: { botones: BotonPreview[]; color: string }) {
   if (botones.length === 0) return null
   return (
     <div className="mt-1 space-y-1">
       {botones.map((b, i) => (
         <div key={i} className="rounded-xl bg-white shadow-sm px-2.5 py-1.5 flex items-center justify-center gap-1.5">
           <svg viewBox="0 0 20 20" fill="currentColor" className="w-2.5 h-2.5" style={{ color }}>
-            {b.tipo === "enlace" ? (
+            {b.tipo === "telefono" ? (
+              <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
+            ) : b.tipo === "enlace" ? (
               <path
                 fillRule="evenodd"
                 d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z"
@@ -137,6 +150,89 @@ export default function DevicePreview({
               {pie.trim() ||
                 "Este mensaje fue enviado por Pqrslab a través de Concept CRM. Si no desea recibir más comunicaciones, puede darse de baja en cualquier momento."}
             </p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  /* Instagram → maqueta del Direct */
+  if (canal === "instagram") {
+    return (
+      <div className="mx-auto rounded-[30px] p-2 shadow-xl" style={{ width: 250, background: "#0f172a" }}>
+        <div className="rounded-[24px] overflow-hidden bg-white">
+          <div className="relative h-5 bg-white">
+            <span className="absolute left-1/2 -translate-x-1/2 top-1 w-14 h-2.5 rounded-full bg-slate-900" />
+          </div>
+
+          {/* Cabecera del Direct */}
+          <div className="flex items-center gap-2 px-3 py-2 border-b border-slate-100 bg-white">
+            <svg viewBox="0 0 20 20" fill="currentColor" className="w-3.5 h-3.5 text-slate-700">
+              <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
+            </svg>
+            <div
+              className="w-6 h-6 rounded-full p-[1.5px] shrink-0"
+              style={{ background: "linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)" }}
+            >
+              <div className="w-full h-full rounded-full flex items-center justify-center text-[7px] font-bold text-white bg-slate-800">
+                CC
+              </div>
+            </div>
+            <div className="min-w-0">
+              <p className="text-[10px] font-bold text-slate-800 truncate">pqrslab</p>
+              <p className="text-[8px] text-slate-400">Cuenta profesional</p>
+            </div>
+          </div>
+
+          {/* Hilo */}
+          <div className="px-3 py-4 min-h-[260px] bg-white">
+            <div className="flex flex-col items-center gap-1 mb-4">
+              <div
+                className="w-10 h-10 rounded-full p-[2px]"
+                style={{ background: "linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)" }}
+              >
+                <div className="w-full h-full rounded-full flex items-center justify-center text-[10px] font-bold text-white bg-slate-800">
+                  CC
+                </div>
+              </div>
+              <p className="text-[9px] font-bold text-slate-700">pqrslab</p>
+              <p className="text-[8px] text-slate-400">Instagram · Atención al ciudadano</p>
+            </div>
+
+            <div className="max-w-[85%]">
+              <div className="rounded-3xl px-3 py-2" style={{ background: "#efefef", borderBottomLeftRadius: 6 }}>
+                <p className={`text-[11px] leading-relaxed whitespace-pre-wrap break-words ${vacio ? "text-slate-400 italic" : "text-slate-800"}`}>
+                  {vacio ? texto : renderCuerpo(texto, conDatos)}
+                </p>
+              </div>
+              <p className="text-[8px] text-slate-400 mt-1 ml-2">Enviado ahora</p>
+            </div>
+
+            {/* Respuestas rápidas de Instagram */}
+            {botones.length > 0 && (
+              <div className="flex flex-wrap gap-1.5 mt-3 justify-end">
+                {botones.map((b, i) => (
+                  <span
+                    key={i}
+                    className="text-[10px] font-semibold rounded-full px-3 py-1.5 border-2"
+                    style={{ borderColor: "#3797F0", color: "#3797F0" }}
+                  >
+                    {b.texto || "Respuesta"}
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Barra de mensaje */}
+          <div className="px-3 py-2 border-t border-slate-100 bg-white">
+            <div className="rounded-full border border-slate-200 px-3 py-1.5">
+              <span className="text-[9px] text-slate-300">Enviar mensaje…</span>
+            </div>
+          </div>
+
+          <div className="h-5 flex items-center justify-center bg-white">
+            <span className="w-16 h-1 rounded-full bg-slate-300" />
           </div>
         </div>
       </div>

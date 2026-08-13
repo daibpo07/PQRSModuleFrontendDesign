@@ -1,39 +1,45 @@
 import { useState } from "react"
-import DevicePreview, { sampleVars } from "./DevicePreview"
+import DevicePreview from "./DevicePreview"
 import {
-  CanalIcon,
-  canalMeta,
+  canalPlantillaMeta,
+  categoriaMetaEstilo,
+  variablesPlantilla,
   type BotonPlantilla,
-  type Canal,
-  type Plantilla,
-} from "./EnviosMasivosData"
+  type CanalPlantilla,
+  type CategoriaMeta,
+  type PlantillaIndividual,
+} from "./EnviosIndividualesData"
 
-/* ─────────────────────────────────────────────
-   Props
-───────────────────────────────────────────── */
 interface Props {
-  inicial?: Plantilla | null
+  inicial?: PlantillaIndividual | null
   onClose: () => void
-  onGuardar: (p: Plantilla) => void
+  onGuardar: (p: PlantillaIndividual) => void
 }
 
-const categorias: Plantilla["categoria"][] = [
-  "Notificación",
-  "Recordatorio",
-  "Encuesta",
-  "Alerta",
-  "Cierre",
-]
-
-/** Partes que acepta cada canal. Meta solo permite estructura completa en WhatsApp. */
-const soporta: Record<Canal, { encabezado: boolean; pie: boolean; botones: number; asunto: boolean }> = {
-  whatsapp: { encabezado: true, pie: true, botones: 3, asunto: false },
-  email:    { encabezado: true, pie: true, botones: 2, asunto: true },
-  sms:      { encabezado: false, pie: false, botones: 0, asunto: false },
-  push:     { encabezado: true, pie: false, botones: 0, asunto: false },
-}
+const categorias: CategoriaMeta[] = ["Utilidad", "Servicio", "Autenticación", "Marketing"]
 
 type PasoId = "identidad" | "encabezado" | "cuerpo" | "pie" | "botones" | "revision"
+
+/* ── Icono de canal ── */
+function IconoCanal({ canal, className = "w-4 h-4" }: { canal: CanalPlantilla; className?: string }) {
+  if (canal === "whatsapp")
+    return (
+      <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 00-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.71.306 1.263.489 1.694.625.712.227 1.36.195 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347M12.05 21.785h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+      </svg>
+    )
+  if (canal === "instagram")
+    return (
+      <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
+        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" />
+      </svg>
+    )
+  return (
+    <svg viewBox="0 0 20 20" fill="currentColor" className={className}>
+      <path fillRule="evenodd" d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2z" clipRule="evenodd" />
+    </svg>
+  )
+}
 
 /* ── Cabecera del paso ── */
 function PasoHeader({ titulo, ayuda, opcional }: { titulo: string; ayuda: string; opcional?: boolean }) {
@@ -51,13 +57,15 @@ function PasoHeader({ titulo, ayuda, opcional }: { titulo: string; ayuda: string
 }
 
 /* ─────────────────────────────────────────────
-   Editor de plantillas por pasos
+   Editor de plantillas Meta por pasos
 ───────────────────────────────────────────── */
-export default function PlantillaEditor({ inicial, onClose, onGuardar }: Props) {
+export default function PlantillaMetaEditor({ inicial, onClose, onGuardar }: Props) {
   const [pasoIdx, setPasoIdx] = useState(0)
   const [nombre, setNombre] = useState(inicial?.nombre ?? "")
-  const [canal, setCanal] = useState<Canal>(inicial?.canal ?? "whatsapp")
-  const [categoria, setCategoria] = useState<Plantilla["categoria"]>(inicial?.categoria ?? "Notificación")
+  const [atajo, setAtajo] = useState(inicial?.atajo ?? "/")
+  const [canal, setCanal] = useState<CanalPlantilla>(inicial?.canal ?? "whatsapp")
+  const [categoria, setCategoria] = useState<CategoriaMeta>(inicial?.categoria ?? "Utilidad")
+  const [idioma, setIdioma] = useState(inicial?.idioma ?? "Español (CO)")
   const [encabezado, setEncabezado] = useState(inicial?.encabezado ?? "")
   const [cuerpo, setCuerpo] = useState(inicial?.cuerpo ?? "")
   const [pie, setPie] = useState(inicial?.pie ?? "")
@@ -65,13 +73,15 @@ export default function PlantillaEditor({ inicial, onClose, onGuardar }: Props) 
   const [conDatos, setConDatos] = useState(true)
   const [errores, setErrores] = useState<Record<string, string>>({})
 
-  const meta = canalMeta[canal]
-  const cap = soporta[canal]
-  const restantes = meta.limite - cuerpo.length
+  const cap = canalPlantillaMeta[canal]
+  const restantes = cap.limite - cuerpo.length
+  const segmentosSms = canal === "sms" ? Math.max(1, Math.ceil(cuerpo.length / 160)) : 0
 
   const variables = Array.from(
     new Set([...`${encabezado} ${cuerpo}`.matchAll(/\{\{(\w+)\}\}/g)].map(m => m[1])),
   )
+
+  const etiquetaBotones = canal === "instagram" ? "Respuestas rápidas" : "Botones"
 
   /* Los pasos dependen de lo que admite el canal */
   const pasos: { id: PasoId; label: string }[] = [
@@ -79,19 +89,21 @@ export default function PlantillaEditor({ inicial, onClose, onGuardar }: Props) 
     ...(cap.encabezado ? [{ id: "encabezado" as PasoId, label: "Encabezado" }] : []),
     { id: "cuerpo", label: "Cuerpo" },
     ...(cap.pie ? [{ id: "pie" as PasoId, label: "Pie" }] : []),
-    ...(cap.botones > 0 ? [{ id: "botones" as PasoId, label: "Botones" }] : []),
+    ...(cap.botones > 0 ? [{ id: "botones" as PasoId, label: canal === "instagram" ? "Respuestas" : "Botones" }] : []),
     { id: "revision", label: "Revisión" },
   ]
   const idx = Math.min(pasoIdx, pasos.length - 1)
   const paso = pasos[idx].id
   const ultimo = idx === pasos.length - 1
 
-  const cambiarCanal = (c: Canal) => {
+  const cambiarCanal = (c: CanalPlantilla) => {
     setCanal(c)
-    const nueva = soporta[c]
+    const nueva = canalPlantillaMeta[c]
     setBotones(b => b.slice(0, nueva.botones))
     if (!nueva.encabezado) setEncabezado("")
     if (!nueva.pie) setPie("")
+    /* Instagram solo admite mensajes de servicio dentro de la ventana de 24 h */
+    if (c === "instagram") setCategoria("Servicio")
     setPasoIdx(0)
   }
 
@@ -106,10 +118,14 @@ export default function PlantillaEditor({ inicial, onClose, onGuardar }: Props) 
   /* Validación del paso actual */
   const validar = () => {
     const e: Record<string, string> = {}
-    if (paso === "identidad" && nombre.trim().length < 5) e.nombre = "Dale un nombre de al menos 5 caracteres"
+    if (paso === "identidad") {
+      if (nombre.trim().length < 5) e.nombre = "Dale un nombre de al menos 5 caracteres"
+      if (!/^\/[a-z0-9]{2,}$/.test(atajo.trim().toLowerCase()))
+        e.atajo = "El atajo debe empezar con / y tener al menos 2 letras"
+    }
     if (paso === "cuerpo") {
       if (!cuerpo.trim()) e.cuerpo = "El cuerpo del mensaje es obligatorio"
-      else if (cuerpo.length > meta.limite) e.cuerpo = `Excede el límite de ${meta.limite} caracteres`
+      else if (cuerpo.length > cap.limite) e.cuerpo = `Excede el límite de ${cap.limite} caracteres del canal`
     }
     if (paso === "botones" && botones.some(b => !b.texto.trim())) e.botones = "Todos los botones necesitan texto"
     setErrores(e)
@@ -137,10 +153,11 @@ export default function PlantillaEditor({ inicial, onClose, onGuardar }: Props) 
     onGuardar({
       id: inicial?.id ?? `p${Date.now()}`,
       nombre: nombre.trim(),
+      atajo: atajo.trim().toLowerCase(),
       canal,
       categoria,
-      /* WhatsApp exige revisión de Meta antes de poder usarse */
-      aprobacion: canal === "whatsapp" ? "En revisión" : "Aprobada",
+      aprobacion: cap.requiereAprobacion ? "En revisión" : "No requiere",
+      idioma,
       encabezado: cap.encabezado ? encabezado.trim() || undefined : undefined,
       cuerpo: cuerpo.trim(),
       pie: cap.pie ? pie.trim() || undefined : undefined,
@@ -148,17 +165,19 @@ export default function PlantillaEditor({ inicial, onClose, onGuardar }: Props) 
       variables,
       usos: inicial?.usos ?? 0,
       tasaLectura: inicial?.tasaLectura ?? 0,
+      calidad: inicial?.calidad,
+      autor: inicial?.autor ?? "Ana Martínez",
+      actualizado: "2026-08-13",
     })
   }
 
-  /* Bloques para el resumen y la lista de estructura */
   const bloques: { id: PasoId; l: string; ok: boolean; na: boolean; valor: string }[] = [
     { id: "encabezado", l: "Encabezado", ok: cap.encabezado && !!encabezado.trim(), na: !cap.encabezado, valor: encabezado },
     { id: "cuerpo", l: "Cuerpo", ok: !!cuerpo.trim(), na: false, valor: cuerpo },
     { id: "pie", l: "Pie de página", ok: cap.pie && !!pie.trim(), na: !cap.pie, valor: pie },
     {
       id: "botones",
-      l: "Botones",
+      l: etiquetaBotones,
       ok: botones.length > 0,
       na: cap.botones === 0,
       valor: botones.map(b => b.texto).join(" · "),
@@ -174,8 +193,8 @@ export default function PlantillaEditor({ inicial, onClose, onGuardar }: Props) 
         {/* ── Encabezado ── */}
         <div className="px-6 pt-5 pb-4 border-b border-slate-100 shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0" style={{ background: meta.bg, color: meta.color }}>
-              <CanalIcon canal={canal} className="w-4.5 h-4.5" />
+            <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0" style={{ background: cap.bg, color: cap.color }}>
+              <IconoCanal canal={canal} className="w-4.5 h-4.5" />
             </div>
             <div>
               <h3 className="text-sm font-bold text-slate-800">{inicial ? "Editar plantilla" : "Nueva plantilla"}</h3>
@@ -232,7 +251,7 @@ export default function PlantillaEditor({ inicial, onClose, onGuardar }: Props) 
           </div>
         </div>
 
-        {/* ── Cuerpo: el paso a la izquierda, la vista previa fija a la derecha ── */}
+        {/* ── Cuerpo: paso a la izquierda, vista previa anclada a la derecha ── */}
         <div className="flex-1 min-h-0 grid lg:grid-cols-[1fr_310px]">
 
           <div className="overflow-y-auto p-6 min-w-0" style={{ background: "#f8fafc" }}>
@@ -240,68 +259,95 @@ export default function PlantillaEditor({ inicial, onClose, onGuardar }: Props) 
             {/* Paso · Identidad */}
             {paso === "identidad" && (
               <>
-                <PasoHeader titulo="Identidad de la plantilla" ayuda="Cómo la reconocerás al armar una campaña y por qué canal saldrá." />
+                <PasoHeader
+                  titulo="Identidad de la plantilla"
+                  ayuda="Cómo la reconocerás, con qué atajo la insertarás en el chat y por qué canal se enviará."
+                />
                 <div className="space-y-4">
-                  <div>
-                    <label className="block text-[11px] font-semibold text-slate-600 mb-1.5">Nombre</label>
-                    <input
-                      value={nombre}
-                      onChange={e => setNombre(e.target.value)}
-                      autoFocus
-                      placeholder="Ej. Recordatorio de vencimiento"
-                      className="w-full px-3 py-2.5 rounded-lg border bg-white text-sm text-slate-700 placeholder:text-slate-300 focus:outline-none focus:ring-2 focus:ring-[#0EA5E9]/25 focus:border-[#0EA5E9] transition-all"
-                      style={{ borderColor: errores.nombre ? "#fca5a5" : "#e2e8f0" }}
-                    />
-                    {errores.nombre && <p className="text-[11px] text-red-500 mt-1">{errores.nombre}</p>}
+                  <div className="grid sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-[11px] font-semibold text-slate-600 mb-1.5">Nombre</label>
+                      <input
+                        value={nombre}
+                        onChange={e => setNombre(e.target.value)}
+                        autoFocus
+                        placeholder="Ej. Confirmación de radicado"
+                        className="w-full px-3 py-2.5 rounded-lg border bg-white text-sm text-slate-700 placeholder:text-slate-300 focus:outline-none focus:ring-2 focus:ring-[#0EA5E9]/25 focus:border-[#0EA5E9] transition-all"
+                        style={{ borderColor: errores.nombre ? "#fca5a5" : "#e2e8f0" }}
+                      />
+                      {errores.nombre && <p className="text-[11px] text-red-500 mt-1">{errores.nombre}</p>}
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-semibold text-slate-600 mb-1.5">Atajo en el chat</label>
+                      <input
+                        value={atajo}
+                        onChange={e => setAtajo(e.target.value)}
+                        placeholder="/radicado"
+                        className="w-full px-3 py-2.5 rounded-lg border bg-white text-sm font-mono text-slate-700 placeholder:text-slate-300 focus:outline-none focus:ring-2 focus:ring-[#0EA5E9]/25 focus:border-[#0EA5E9] transition-all"
+                        style={{ borderColor: errores.atajo ? "#fca5a5" : "#e2e8f0" }}
+                      />
+                      {errores.atajo && <p className="text-[11px] text-red-500 mt-1">{errores.atajo}</p>}
+                    </div>
                   </div>
 
                   <div>
                     <label className="block text-[11px] font-semibold text-slate-600 mb-1.5">Canal</label>
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                      {(Object.keys(canalMeta) as Canal[]).map(c => {
-                        const m = canalMeta[c]
+                    <div className="grid grid-cols-3 gap-2">
+                      {(Object.keys(canalPlantillaMeta) as CanalPlantilla[]).map(c => {
+                        const m = canalPlantillaMeta[c]
                         const sel = canal === c
                         return (
                           <button
                             key={c}
                             onClick={() => cambiarCanal(c)}
-                            className="flex flex-col items-center gap-1.5 py-3 rounded-lg border-2 transition-all cursor-pointer"
+                            className="flex flex-col items-center gap-1.5 py-3 rounded-lg border-2 transition-all cursor-pointer relative"
                             style={{ borderColor: sel ? m.color : "#e2e8f0", background: sel ? m.bg : "#fff" }}
                           >
                             <span style={{ color: sel ? m.color : "#94a3b8" }}>
-                              <CanalIcon canal={c} className="w-4 h-4" />
+                              <IconoCanal canal={c} />
                             </span>
                             <span className="text-[10px] font-bold" style={{ color: sel ? m.color : "#94a3b8" }}>
-                              {m.label}
+                              {m.corto}
                             </span>
+                            {m.esMeta && (
+                              <span className="absolute top-1.5 right-1.5 text-[7px] font-bold rounded px-1 py-px bg-slate-100 text-slate-400">
+                                META
+                              </span>
+                            )}
                           </button>
                         )
                       })}
                     </div>
-                    <p className="text-[10px] text-slate-400 mt-2">
-                      {meta.label} admite {cap.encabezado ? "encabezado, " : ""}cuerpo
-                      {cap.pie ? ", pie" : ""}
-                      {cap.botones > 0 ? ` y hasta ${cap.botones} botones` : " únicamente"}.
-                    </p>
+                    <p className="text-[10px] text-slate-400 mt-2 leading-relaxed">{cap.nota}</p>
                   </div>
 
-                  <div>
-                    <label className="block text-[11px] font-semibold text-slate-600 mb-1.5">Categoría</label>
-                    <div className="flex gap-1.5 flex-wrap">
-                      {categorias.map(c => (
-                        <button
-                          key={c}
-                          onClick={() => setCategoria(c)}
-                          className="px-3 py-1.5 rounded-full text-[11px] font-semibold border transition-all cursor-pointer"
-                          style={{
-                            background: categoria === c ? "#1E3A8A" : "#fff",
-                            color: categoria === c ? "#fff" : "#64748b",
-                            borderColor: categoria === c ? "#1E3A8A" : "#e2e8f0",
-                          }}
-                        >
-                          {c}
-                        </button>
-                      ))}
+                  <div className="grid sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-[11px] font-semibold text-slate-600 mb-1.5">Categoría</label>
+                      <select
+                        value={categoria}
+                        onChange={e => setCategoria(e.target.value as CategoriaMeta)}
+                        className="w-full px-3 py-2.5 rounded-lg border border-slate-200 bg-white text-sm text-slate-700 focus:outline-none focus:border-[#0EA5E9] cursor-pointer transition-all"
+                      >
+                        {categorias.map(c => (
+                          <option key={c}>{c}</option>
+                        ))}
+                      </select>
+                      <p className="text-[10px] text-slate-400 mt-1 leading-snug">
+                        {categoriaMetaEstilo[categoria].desc}
+                      </p>
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-semibold text-slate-600 mb-1.5">Idioma</label>
+                      <select
+                        value={idioma}
+                        onChange={e => setIdioma(e.target.value)}
+                        className="w-full px-3 py-2.5 rounded-lg border border-slate-200 bg-white text-sm text-slate-700 focus:outline-none focus:border-[#0EA5E9] cursor-pointer transition-all"
+                      >
+                        {["Español (CO)", "Español (ES)", "Inglés (US)", "Portugués (BR)"].map(i => (
+                          <option key={i}>{i}</option>
+                        ))}
+                      </select>
                     </div>
                   </div>
                 </div>
@@ -313,7 +359,7 @@ export default function PlantillaEditor({ inicial, onClose, onGuardar }: Props) 
               <>
                 <PasoHeader
                   titulo="Encabezado"
-                  ayuda="Una línea corta en negrita sobre el mensaje. Ayuda a que se entienda de qué trata sin abrirlo."
+                  ayuda="Una línea corta en negrita sobre el mensaje. Meta la muestra destacada en la notificación."
                   opcional
                 />
                 <input
@@ -321,7 +367,7 @@ export default function PlantillaEditor({ inicial, onClose, onGuardar }: Props) 
                   onChange={e => setEncabezado(e.target.value)}
                   autoFocus
                   maxLength={60}
-                  placeholder="Ej. Tu radicado está por vencer"
+                  placeholder="Ej. Recibimos tu solicitud"
                   className="w-full px-3 py-2.5 rounded-lg border border-slate-200 bg-white text-sm text-slate-700 placeholder:text-slate-300 focus:outline-none focus:ring-2 focus:ring-[#0EA5E9]/25 focus:border-[#0EA5E9] transition-all"
                 />
                 <p className="text-[10px] text-slate-400 mt-1 text-right font-mono">{encabezado.length} / 60</p>
@@ -336,20 +382,28 @@ export default function PlantillaEditor({ inicial, onClose, onGuardar }: Props) 
               <>
                 <PasoHeader
                   titulo="Cuerpo del mensaje"
-                  ayuda="El contenido principal. Usa variables para personalizarlo con los datos de cada destinatario."
+                  ayuda="El contenido principal. Usa variables para personalizarlo con los datos de la conversación abierta."
                 />
                 <textarea
                   value={cuerpo}
                   onChange={e => setCuerpo(e.target.value)}
                   autoFocus
                   rows={8}
-                  placeholder="Hola {{nombre}}, tu radicado {{radicado}} vence el {{fecha}}…"
+                  placeholder="Hola {{nombre}}, tu radicado {{radicado}} quedó registrado…"
                   className="w-full px-3 py-2.5 rounded-lg border bg-white text-sm text-slate-700 placeholder:text-slate-300 focus:outline-none focus:ring-2 focus:ring-[#0EA5E9]/25 focus:border-[#0EA5E9] transition-all resize-none leading-relaxed"
                   style={{ borderColor: errores.cuerpo ? "#fca5a5" : "#e2e8f0" }}
                 />
                 <div className="flex items-center justify-between mt-1">
                   {errores.cuerpo ? (
                     <p className="text-[11px] text-red-500">{errores.cuerpo}</p>
+                  ) : segmentosSms > 0 ? (
+                    <span className="text-[10px] text-slate-400">
+                      Se enviará en{" "}
+                      <span className="font-semibold text-slate-600">
+                        {segmentosSms} mensaje{segmentosSms === 1 ? "" : "s"}
+                      </span>{" "}
+                      de 160 caracteres
+                    </span>
                   ) : (
                     <span className="text-[10px] text-slate-400">Enter crea un salto de línea</span>
                   )}
@@ -357,22 +411,22 @@ export default function PlantillaEditor({ inicial, onClose, onGuardar }: Props) 
                     className="text-[10px] font-mono font-semibold"
                     style={{ color: restantes < 0 ? "#dc2626" : restantes < 40 ? "#d97706" : "#94a3b8" }}
                   >
-                    {cuerpo.length} / {meta.limite}
+                    {cuerpo.length} / {cap.limite}
                   </span>
                 </div>
 
                 <div className="mt-5">
                   <p className="text-[9px] font-bold uppercase tracking-widest text-slate-400 mb-2">
-                    Variables disponibles
+                    Variables del contexto
                   </p>
                   <div className="flex gap-1.5 flex-wrap">
-                    {Object.keys(sampleVars).map(v => {
+                    {Object.keys(variablesPlantilla).map(v => {
                       const usada = variables.includes(v)
                       return (
                         <button
                           key={v}
                           onClick={() => setCuerpo(c => `${c}{{${v}}}`)}
-                          title={`Se reemplaza por: ${sampleVars[v]}`}
+                          title={`Se reemplaza por: ${variablesPlantilla[v]}`}
                           className="px-2 py-1 rounded-md text-[10px] font-mono font-semibold border transition-all cursor-pointer"
                           style={{
                             background: usada ? "#fef9c3" : "#fff",
@@ -394,7 +448,7 @@ export default function PlantillaEditor({ inicial, onClose, onGuardar }: Props) 
               <>
                 <PasoHeader
                   titulo="Pie de página"
-                  ayuda="Texto pequeño al final, en gris. Suele usarse para la firma de la entidad o un aviso legal."
+                  ayuda="Texto pequeño en gris al final. Suele usarse para la firma de la entidad o el aviso de baja."
                   opcional
                 />
                 <input
@@ -413,8 +467,12 @@ export default function PlantillaEditor({ inicial, onClose, onGuardar }: Props) 
             {paso === "botones" && (
               <>
                 <PasoHeader
-                  titulo="Botones de acción"
-                  ayuda={`Hasta ${cap.botones}. Los de respuesta rápida devuelven un mensaje al sistema; los de enlace abren una página.`}
+                  titulo={canal === "instagram" ? "Respuestas rápidas" : "Botones de acción"}
+                  ayuda={
+                    canal === "instagram"
+                      ? `Hasta ${cap.botones}. Instagram las muestra como píldoras que el usuario toca para responder.`
+                      : `Hasta ${cap.botones}. Los de respuesta devuelven un mensaje al sistema, los de enlace abren una página y los de teléfono inician una llamada.`
+                  }
                   opcional
                 />
                 <div className="space-y-2">
@@ -426,10 +484,12 @@ export default function PlantillaEditor({ inicial, onClose, onGuardar }: Props) 
                           style={
                             b.tipo === "enlace"
                               ? { background: "#e0f2fe", color: "#0369a1" }
-                              : { background: "#d1fae5", color: "#065f46" }
+                              : b.tipo === "telefono"
+                                ? { background: "#ede9fe", color: "#6d28d9" }
+                                : { background: "#d1fae5", color: "#065f46" }
                           }
                         >
-                          {b.tipo === "enlace" ? "Enlace" : "Respuesta"}
+                          {b.tipo === "enlace" ? "Enlace" : b.tipo === "telefono" ? "Llamada" : "Respuesta"}
                         </span>
                         <input
                           value={b.texto}
@@ -467,17 +527,29 @@ export default function PlantillaEditor({ inicial, onClose, onGuardar }: Props) 
                       onClick={() => agregarBoton("respuesta")}
                       className="flex-1 px-3 py-2 rounded-lg text-[11px] font-semibold border border-dashed border-slate-300 bg-white text-slate-500 hover:border-[#1E3A8A] hover:text-[#1E3A8A] transition-all cursor-pointer"
                     >
-                      + Respuesta rápida
+                      + Respuesta
                     </button>
-                    <button
-                      onClick={() => agregarBoton("enlace")}
-                      className="flex-1 px-3 py-2 rounded-lg text-[11px] font-semibold border border-dashed border-slate-300 bg-white text-slate-500 hover:border-[#1E3A8A] hover:text-[#1E3A8A] transition-all cursor-pointer"
-                    >
-                      + Enlace
-                    </button>
+                    {canal === "whatsapp" && (
+                      <>
+                        <button
+                          onClick={() => agregarBoton("enlace")}
+                          className="flex-1 px-3 py-2 rounded-lg text-[11px] font-semibold border border-dashed border-slate-300 bg-white text-slate-500 hover:border-[#1E3A8A] hover:text-[#1E3A8A] transition-all cursor-pointer"
+                        >
+                          + Enlace
+                        </button>
+                        <button
+                          onClick={() => agregarBoton("telefono")}
+                          className="flex-1 px-3 py-2 rounded-lg text-[11px] font-semibold border border-dashed border-slate-300 bg-white text-slate-500 hover:border-[#1E3A8A] hover:text-[#1E3A8A] transition-all cursor-pointer"
+                        >
+                          + Llamada
+                        </button>
+                      </>
+                    )}
                   </div>
                 ) : (
-                  <p className="text-[10px] text-slate-400 mt-3">Alcanzaste el máximo de {cap.botones} botones.</p>
+                  <p className="text-[10px] text-slate-400 mt-3">
+                    Alcanzaste el máximo de {cap.botones} en {cap.label}.
+                  </p>
                 )}
               </>
             )}
@@ -492,18 +564,22 @@ export default function PlantillaEditor({ inicial, onClose, onGuardar }: Props) 
                   </div>
                   <div className="divide-y divide-slate-50">
                     <div className="flex items-center justify-between gap-3 px-4 py-2.5">
-                      <span className="text-[11px] text-slate-400">Nombre</span>
-                      <span className="text-[11px] font-semibold text-slate-700 text-right truncate">{nombre || "—"}</span>
+                      <span className="text-[11px] text-slate-400">Nombre · Atajo</span>
+                      <span className="text-[11px] font-semibold text-slate-700 text-right truncate">
+                        {nombre || "—"} · <span className="font-mono">{atajo}</span>
+                      </span>
                     </div>
                     <div className="flex items-center justify-between gap-3 px-4 py-2.5">
                       <span className="text-[11px] text-slate-400">Canal · Categoría</span>
-                      <span className="text-[11px] font-semibold text-slate-700">{meta.label} · {categoria}</span>
+                      <span className="text-[11px] font-semibold text-slate-700">
+                        {cap.corto} · {categoria}
+                      </span>
                     </div>
                     {bloques.map(b => (
                       <div key={b.id} className="flex items-start justify-between gap-3 px-4 py-2.5">
                         <span className="text-[11px] text-slate-400 shrink-0">{b.l}</span>
                         {b.na ? (
-                          <span className="text-[11px] text-slate-300">No aplica en {meta.label}</span>
+                          <span className="text-[11px] text-slate-300">No aplica en {cap.corto}</span>
                         ) : b.ok ? (
                           <div className="flex items-center gap-2 min-w-0">
                             <span className="text-[11px] text-slate-600 truncate max-w-[220px]">{b.valor}</span>
@@ -531,30 +607,17 @@ export default function PlantillaEditor({ inicial, onClose, onGuardar }: Props) 
 
                 <div
                   className="rounded-xl p-3.5 flex items-start gap-3 mt-4"
-                  style={{ background: canal === "whatsapp" ? "#fef3c7" : "#eff3ff" }}
+                  style={{ background: cap.requiereAprobacion ? "#fef3c7" : "#eff3ff" }}
                 >
                   <svg
                     viewBox="0 0 20 20"
                     fill="currentColor"
                     className="w-4 h-4 shrink-0 mt-0.5"
-                    style={{ color: canal === "whatsapp" ? "#92400e" : "#1E3A8A" }}
+                    style={{ color: cap.requiereAprobacion ? "#92400e" : "#1E3A8A" }}
                   >
                     <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                   </svg>
-                  <p className="text-[11px] leading-relaxed text-slate-600">
-                    {canal === "whatsapp" ? (
-                      <>
-                        Al guardar, la plantilla queda <span className="font-semibold">En revisión</span> y se envía a Meta
-                        para aprobación. El proceso tarda entre unos minutos y 24 horas; no podrás usarla en una campaña
-                        hasta que quede aprobada.
-                      </>
-                    ) : (
-                      <>
-                        Las plantillas de {meta.label} quedan{" "}
-                        <span className="font-semibold">disponibles de inmediato</span>, sin proceso de aprobación externo.
-                      </>
-                    )}
-                  </p>
+                  <p className="text-[11px] leading-relaxed text-slate-600">{cap.nota}</p>
                 </div>
               </>
             )}
@@ -580,7 +643,6 @@ export default function PlantillaEditor({ inicial, onClose, onGuardar }: Props) 
             <DevicePreview
               canal={canal}
               cuerpo={cuerpo}
-              asunto={cap.asunto ? nombre : undefined}
               conDatos={conDatos}
               encabezado={cap.encabezado ? encabezado : ""}
               pie={cap.pie ? pie : ""}
@@ -632,8 +694,8 @@ export default function PlantillaEditor({ inicial, onClose, onGuardar }: Props) 
                   {variables.length} variable{variables.length === 1 ? "" : "s"} en uso
                 </p>
                 <p className="text-[10px] leading-relaxed" style={{ color: "#854d0e" }}>
-                  Cada destinatario recibirá su propio valor. Si un contacto no tiene el dato, la campaña lo omite para
-                  evitar enviar el marcador en crudo.
+                  Se rellenan solas con el ciudadano, el radicado y el asesor de la conversación abierta al insertar la
+                  plantilla con <span className="font-mono font-bold">{atajo || "/atajo"}</span>.
                 </p>
               </div>
             )}
@@ -658,7 +720,7 @@ export default function PlantillaEditor({ inicial, onClose, onGuardar }: Props) 
             onMouseEnter={e => (e.currentTarget.style.background = "#162d6e")}
             onMouseLeave={e => (e.currentTarget.style.background = "#1E3A8A")}
           >
-            {ultimo ? (canal === "whatsapp" ? "Guardar y enviar a revisión" : "Guardar plantilla") : "Continuar"}
+            {ultimo ? (cap.requiereAprobacion ? "Guardar y enviar a Meta" : "Guardar plantilla") : "Continuar"}
           </button>
         </div>
       </div>
