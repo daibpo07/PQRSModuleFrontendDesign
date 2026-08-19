@@ -1,12 +1,13 @@
 import { useState } from "react"
-import Sidebar from "./components/Sidebar"
-import Header from "./components/Header"
-import Dashboard from "./components/Dashboard"
-import TableView from "./components/TableView"
-import FormNew from "./components/FormNew"
-import DetailView from "./components/DetailView"
-import EnviosIndividuales from "./components/EnviosIndividuales"
-import EnviosMasivos from "./components/EnviosMasivos"
+import Sidebar from "@/components/layout/Sidebar"
+import Header from "@/components/layout/Header"
+import Dashboard from "@/components/pqrs/Dashboard"
+import TableView from "@/components/pqrs/TableView"
+import FormNew from "@/components/pqrs/FormNew"
+import DetailView from "@/components/pqrs/DetailView"
+import EnviosIndividuales from "@/components/individuales/EnviosIndividuales"
+import EnviosMasivos from "@/components/masivos/EnviosMasivos"
+import FlujosTrabajo from "@/components/flujos/FlujosTrabajo"
 
 export type View =
   | "dashboard"
@@ -15,6 +16,7 @@ export type View =
   | "detail"
   | "mensajes"
   | "masivos"
+  | "flujos"
 
 export interface Radicado {
   id: string
@@ -274,6 +276,7 @@ export default function App() {
           )}
           {view === "mensajes" && <EnviosIndividuales />}
           {view === "masivos" && <EnviosMasivos />}
+          {view === "flujos" && <FlujosTrabajo />}
         </main>
       </div>
     </div>

@@ -1,4 +1,4 @@
-import type { Radicado } from '../App'
+import type { Radicado } from "@/App"
 
 interface Props {
   radicado: Radicado

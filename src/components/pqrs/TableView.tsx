@@ -1,5 +1,5 @@
 import { useState } from "react"
-import type { Radicado, View } from "../App"
+import type { Radicado, View } from "@/App"
 import FormNew from "./FormNew"
 import GestionFormularios from "./GestionFormularios"
 import Configuracion from "./Configuracion"

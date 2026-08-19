@@ -1,4 +1,4 @@
-import type { View } from "../App"
+import type { View } from "@/App"
 
 interface Props {
   view: View
@@ -13,6 +13,7 @@ const pageTitles: Partial<Record<View, string>> = {
   detail: "PQRS",
   mensajes: "Envíos Individuales",
   masivos: "Envíos Masivos",
+  flujos: "Flujos de Trabajo",
 }
 
 export default function Header({

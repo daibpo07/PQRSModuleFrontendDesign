@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import type { Radicado } from '../App'
+import type { Radicado } from "@/App"
 
 interface Props {
   onSubmit: (r: Radicado) => void

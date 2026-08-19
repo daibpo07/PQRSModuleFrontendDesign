@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react"
-import DevicePreview, { sampleVars } from "./DevicePreview"
+import DevicePreview, { sampleVars } from "@/components/shared/DevicePreview"
 import {
   CanalIcon,
   canalMeta,

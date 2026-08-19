@@ -1,5 +1,5 @@
 import { useState } from "react"
-import DevicePreview from "./DevicePreview"
+import DevicePreview from "@/components/shared/DevicePreview"
 import {
   canalPlantillaMeta,
   categoriaMetaEstilo,

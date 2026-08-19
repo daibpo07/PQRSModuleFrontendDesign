@@ -1,4 +1,4 @@
-import type { View } from "../App"
+import type { View } from "@/App"
 
 interface Props {
   view: View
@@ -13,15 +13,6 @@ const navMain = [
     icon: (
       <svg viewBox="0 0 20 20" fill="currentColor" className="w-4.5 h-4.5">
         <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-      </svg>
-    ),
-  },
-  {
-    label: "Usuarios",
-    view: null,
-    icon: (
-      <svg viewBox="0 0 20 20" fill="currentColor" className="w-4.5 h-4.5">
-        <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
       </svg>
     ),
   },
@@ -59,7 +50,7 @@ const navMain = [
   },
   {
     label: "Flujos de Trabajo",
-    view: null,
+    view: "flujos" as View,
     icon: (
       <svg viewBox="0 0 20 20" fill="currentColor" className="w-4.5 h-4.5">
         <path
@@ -70,42 +61,33 @@ const navMain = [
       </svg>
     ),
   },
-  {
-    label: "Cobranza",
-    view: null,
-    icon: (
-      <svg viewBox="0 0 20 20" fill="currentColor" className="w-4.5 h-4.5">
-        <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z" />
-        <path
-          fillRule="evenodd"
-          d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z"
-          clipRule="evenodd"
-        />
-      </svg>
-    ),
-  },
   // {
-  //   label: 'Base de Conocimiento',
+  //   label: "Cobranza",
   //   view: null,
   //   icon: (
   //     <svg viewBox="0 0 20 20" fill="currentColor" className="w-4.5 h-4.5">
-  //       <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z" />
+  //       <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z" />
+  //       <path
+  //         fillRule="evenodd"
+  //         d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z"
+  //         clipRule="evenodd"
+  //       />
   //     </svg>
   //   ),
   // },
-  {
-    label: "Fábrica de Créditos",
-    view: null,
-    icon: (
-      <svg viewBox="0 0 20 20" fill="currentColor" className="w-4.5 h-4.5">
-        <path
-          fillRule="evenodd"
-          d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z"
-          clipRule="evenodd"
-        />
-      </svg>
-    ),
-  },
+  // {
+  //   label: "Fábrica de Créditos",
+  //   view: null,
+  //   icon: (
+  //     <svg viewBox="0 0 20 20" fill="currentColor" className="w-4.5 h-4.5">
+  //       <path
+  //         fillRule="evenodd"
+  //         d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z"
+  //         clipRule="evenodd"
+  //       />
+  //     </svg>
+  //   ),
+  // },
 ]
 
 const navBottom = [
