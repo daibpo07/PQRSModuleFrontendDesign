@@ -2,6 +2,16 @@ import { useEffect, useRef, useState } from "react"
 import Contactos from "./Contactos"
 import PlantillasMeta from "./PlantillasMeta"
 import Tipificaciones from "./Tipificaciones"
+import Transferencias from "./Transferencias"
+import TransferenciaModal from "./TransferenciaModal"
+import TransferirModal from "./TransferirModal"
+import {
+  ASESOR_ACTUAL,
+  mockTransferencias,
+  type AgenteDisponible,
+  type PrioridadTransferencia,
+  type Transferencia,
+} from "./TransferenciasData"
 import {
   Avatar,
   Bubble,
@@ -21,7 +31,7 @@ import {
   type Tipificacion,
 } from "./EnviosIndividualesData"
 
-type Subvista = "conversaciones" | "contactos" | "tipificaciones" | "plantillas"
+type Subvista = "conversaciones" | "transferencias" | "contactos" | "tipificaciones" | "plantillas"
 
 /* ─────────────────────────────────────────────
    Helpers
@@ -388,6 +398,7 @@ function PanelConversaciones({
   onVerHistorico,
   onCerrarAviso,
   onSolicitarCierre,
+  onSolicitarTransferencia,
 }: {
   chats: Chat[]
   setChats: React.Dispatch<React.SetStateAction<Chat[]>>
@@ -398,6 +409,7 @@ function PanelConversaciones({
   onVerHistorico: () => void
   onCerrarAviso: () => void
   onSolicitarCierre: () => void
+  onSolicitarTransferencia: () => void
 }) {
   const [draft, setDraft] = useState("")
   const [search, setSearch] = useState("")
@@ -642,6 +654,16 @@ function PanelConversaciones({
             </p>
           </div>
           <div className="flex items-center gap-1 ml-auto">
+            <button
+              onClick={onSolicitarTransferencia}
+              title="Pasar esta conversación a otro asesor con una nota de contexto"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold border border-slate-200 text-slate-600 hover:border-[#1E3A8A]/40 hover:text-[#1E3A8A] hover:bg-slate-50 transition-all cursor-pointer mr-1"
+            >
+              <svg viewBox="0 0 20 20" fill="currentColor" className="w-3.5 h-3.5">
+                <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+              </svg>
+              Transferir
+            </button>
             <button
               onClick={onSolicitarCierre}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold border border-slate-200 text-slate-600 hover:border-[#1E3A8A]/40 hover:text-[#1E3A8A] hover:bg-slate-50 transition-all cursor-pointer mr-1"
@@ -893,14 +915,30 @@ export default function EnviosIndividuales() {
   const [subvista, setSubvista] = useState<Subvista>("conversaciones")
   const [chats, setChats] = useState<Chat[]>(initialChats)
   const [historial, setHistorial] = useState<ConversacionCerrada[]>(mockHistorial)
+  const [transferencias, setTransferencias] = useState<Transferencia[]>(mockTransferencias)
   const [plantillas, setPlantillas] = useState<PlantillaIndividual[]>(mockPlantillas)
   const [activeChatId, setActiveChatId] = useState<string>("c1")
   const [modalCierre, setModalCierre] = useState(false)
+  const [modalTransferir, setModalTransferir] = useState(false)
+  const [transferenciaAbierta, setTransferenciaAbierta] = useState<Transferencia | null>(null)
+  const [toast, setToast] = useState<{ tono: "ok" | "info"; texto: string } | null>(null)
+  const temporizadorToast = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [aviso, setAviso] = useState<{ id: string; nombre: string } | null>(null)
   const [destacado, setDestacado] = useState<string | null>(null)
 
   const activeChat = chats.find(c => c.id === activeChatId) ?? chats[0] ?? null
   const noLeidos = chats.reduce((a, c) => a + c.noLeidos, 0)
+
+  /* Solo las recibidas y sin decidir cuentan como trabajo pendiente */
+  const transferenciasPorRevisar = transferencias.filter(
+    t => t.destino.nombre === ASESOR_ACTUAL && t.estado === "pendiente",
+  ).length
+
+  const avisar = (tono: "ok" | "info", texto: string) => {
+    if (temporizadorToast.current) clearTimeout(temporizadorToast.current)
+    setToast({ tono, texto })
+    temporizadorToast.current = setTimeout(() => setToast(null), 6000)
+  }
 
   /* Cierra la conversación abierta y la guarda en el histórico con toda su transcripción */
   const cerrarConversacion = (
@@ -963,6 +1001,104 @@ export default function EnviosIndividuales() {
     setModalCierre(false)
   }
 
+  /* ── Aceptar: la conversación entra a mi bandeja con todo su historial ── */
+  const aceptarTransferencia = (id: string) => {
+    const t = transferencias.find(x => x.id === id)
+    if (!t) return
+    const hora = ahoraHora()
+
+    const nuevoChat: Chat = {
+      id: `tc-${t.id}`,
+      nombre: t.contacto,
+      cargo: t.radicado ? `Peticionario — ${t.radicado}` : `Transferida por ${t.origen.nombre}`,
+      documento: t.documento,
+      radicado: t.radicado,
+      canal: t.canal,
+      inicio: t.inicioConversacion,
+      ultimoMensaje: [...t.mensajes].reverse().find(m => !m.sistema)?.text ?? "",
+      hora,
+      noLeidos: 0,
+      online: false,
+      tag: "Transferida",
+      messages: [
+        ...t.mensajes,
+        {
+          id: `${t.id}-aceptada`,
+          text: `${ASESOR_ACTUAL} aceptó la transferencia de ${t.origen.nombre}`,
+          time: hora,
+          mine: false,
+          sistema: true,
+        },
+      ],
+    }
+
+    setChats(prev => [nuevoChat, ...prev])
+    setActiveChatId(nuevoChat.id)
+    setTransferencias(prev =>
+      prev.map(x => (x.id === id ? { ...x, estado: "aceptada", respuesta: { hora: `Hoy ${hora}` } } : x)),
+    )
+    setTransferenciaAbierta(null)
+    setSubvista("conversaciones")
+    avisar("ok", `Aceptaste la conversación de ${t.contacto}. Está en tu bandeja con todo el historial.`)
+  }
+
+  /* ── Rechazar: vuelve al origen con el motivo, nunca en silencio ── */
+  const rechazarTransferencia = (id: string, motivo: string, nota: string) => {
+    const t = transferencias.find(x => x.id === id)
+    if (!t) return
+    const hora = ahoraHora()
+
+    setTransferencias(prev =>
+      prev.map(x =>
+        x.id === id
+          ? { ...x, estado: "rechazada", respuesta: { hora: `Hoy ${hora}`, motivo, nota: nota || undefined } }
+          : x,
+      ),
+    )
+    setTransferenciaAbierta(null)
+    avisar("info", `La conversación de ${t.contacto} volvió a ${t.origen.nombre} con tu motivo.`)
+  }
+
+  /* ── Ofrecer una conversación propia a otro asesor ── */
+  const transferirConversacion = (
+    destino: AgenteDisponible,
+    motivo: string,
+    nota: string,
+    prioridad: PrioridadTransferencia,
+  ) => {
+    if (!activeChat) return
+    const hora = ahoraHora()
+
+    const nueva: Transferencia = {
+      id: `tr-${Date.now()}`,
+      contacto: activeChat.nombre,
+      documento: activeChat.documento ?? "—",
+      canal: activeChat.canal,
+      radicado: activeChat.radicado,
+      origen: { nombre: ASESOR_ACTUAL, cargo: "Asesora", equipo: "Servicios al ciudadano" },
+      destino: { nombre: destino.nombre, cargo: destino.cargo, equipo: destino.equipo },
+      motivo,
+      notaInterna: nota,
+      prioridad,
+      solicitada: `Hoy ${hora}`,
+      esperaMin: 0,
+      inicioConversacion: activeChat.inicio ?? "—",
+      minutosUltimoMensaje: 5,
+      etiquetas: activeChat.tag ? [activeChat.tag] : [],
+      avance: "Transferida desde la bandeja de conversaciones.",
+      mensajes: activeChat.messages,
+      estado: "pendiente",
+    }
+
+    const resto = chats.filter(c => c.id !== activeChat.id)
+    setTransferencias(prev => [nueva, ...prev])
+    setChats(resto)
+    setActiveChatId(resto[0]?.id ?? "")
+    setModalTransferir(false)
+    setSubvista("transferencias")
+    avisar("info", `${destino.nombre} tiene la conversación de ${activeChat.nombre} esperando su decisión.`)
+  }
+
   const irAlHistorico = () => {
     setSubvista("tipificaciones")
     setAviso(null)
@@ -976,6 +1112,7 @@ export default function EnviosIndividuales() {
 
   const tabs: [Subvista, string, number | null][] = [
     ["conversaciones", "Conversaciones", noLeidos > 0 ? noLeidos : null],
+    ["transferencias", "Transferencias", transferenciasPorRevisar > 0 ? transferenciasPorRevisar : null],
     ["contactos", "Contactos", null],
     ["tipificaciones", "Tipificaciones", historial.length],
     ["plantillas", "Plantillas", null],
@@ -1027,7 +1164,12 @@ export default function EnviosIndividuales() {
           onVerHistorico={irAlHistorico}
           onCerrarAviso={() => setAviso(null)}
           onSolicitarCierre={() => setModalCierre(true)}
+          onSolicitarTransferencia={() => setModalTransferir(true)}
         />
+      )}
+
+      {subvista === "transferencias" && (
+        <Transferencias transferencias={transferencias} onAbrir={t => setTransferenciaAbierta(t)} />
       )}
 
       {subvista === "contactos" && (
@@ -1049,6 +1191,69 @@ export default function EnviosIndividuales() {
       {/* Modal de cierre */}
       {modalCierre && activeChat && (
         <CerrarConversacionModal chat={activeChat} onClose={() => setModalCierre(false)} onCerrar={cerrarConversacion} />
+      )}
+
+      {/* Revisión de una transferencia */}
+      {transferenciaAbierta && (
+        <TransferenciaModal
+          transferencia={transferenciaAbierta}
+          soloLectura={transferenciaAbierta.origen.nombre === ASESOR_ACTUAL}
+          onAceptar={aceptarTransferencia}
+          onRechazar={rechazarTransferencia}
+          onClose={() => setTransferenciaAbierta(null)}
+        />
+      )}
+
+      {/* Ofrecer la conversación abierta a otro asesor */}
+      {modalTransferir && activeChat && (
+        <TransferirModal
+          chat={activeChat}
+          onClose={() => setModalTransferir(false)}
+          onTransferir={transferirConversacion}
+        />
+      )}
+
+      {/* Aviso de lo que acaba de pasar */}
+      {toast && (
+        <div className="fixed bottom-6 right-6 z-[60] max-w-sm entra" style={{ "--retraso": "0ms" } as React.CSSProperties}>
+          <div
+            className="flex items-start gap-2.5 rounded-xl border px-4 py-3 shadow-lg"
+            style={{
+              background: toast.tono === "ok" ? "#ecfdf5" : "#eff3ff",
+              borderColor: toast.tono === "ok" ? "#a7f3d0" : "#dce5fb",
+            }}
+          >
+            <svg
+              viewBox="0 0 20 20"
+              fill={toast.tono === "ok" ? "#059669" : "#1E3A8A"}
+              className="w-4 h-4 shrink-0 mt-px"
+            >
+              <path
+                fillRule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                clipRule="evenodd"
+              />
+            </svg>
+            <p
+              className="text-[11px] leading-relaxed flex-1"
+              style={{ color: toast.tono === "ok" ? "#065f46" : "#1E3A8A" }}
+            >
+              {toast.texto}
+            </p>
+            <button
+              onClick={() => setToast(null)}
+              className="text-slate-400 hover:text-slate-600 cursor-pointer shrink-0"
+            >
+              <svg viewBox="0 0 16 16" fill="currentColor" className="w-3.5 h-3.5">
+                <path
+                  fillRule="evenodd"
+                  d="M4.293 4.293a1 1 0 011.414 0L8 6.586l2.293-2.293a1 1 0 111.414 1.414L9.414 8l2.293 2.293a1 1 0 01-1.414 1.414L8 9.414l-2.293 2.293a1 1 0 01-1.414-1.414L6.586 8 4.293 5.707a1 1 0 010-1.414z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
       )}
     </div>
   )
