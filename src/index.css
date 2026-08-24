@@ -50,3 +50,96 @@
 *::-webkit-scrollbar { width: 4px; height: 4px; }
 *::-webkit-scrollbar-thumb { background: #1E3A8A; border-radius: 4px; }
 *::-webkit-scrollbar-track { background: transparent; }
+
+/* ─────────────────────────────────────────────
+   Animaciones del acceso
+
+   El panel de marca respira despacio: orbes que
+   derivan, un barrido de luz y entradas
+   escalonadas. Nada supera los 30 s de ciclo
+   para que no distraiga mientras se escribe.
+───────────────────────────────────────────── */
+
+@keyframes orbe-deriva-a {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  33%      { transform: translate3d(6%, -8%, 0) scale(1.12); }
+  66%      { transform: translate3d(-5%, 6%, 0) scale(0.94); }
+}
+
+@keyframes orbe-deriva-b {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  40%      { transform: translate3d(-9%, 7%, 0) scale(1.18); }
+  75%      { transform: translate3d(7%, -4%, 0) scale(0.9); }
+}
+
+@keyframes orbe-deriva-c {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1.05); }
+  50%      { transform: translate3d(4%, 10%, 0) scale(0.88); }
+}
+
+@keyframes barrido-luz {
+  0%       { transform: translateX(-120%) skewX(-14deg); opacity: 0; }
+  12%      { opacity: 0.5; }
+  40%      { opacity: 0; }
+  100%     { transform: translateX(320%) skewX(-14deg); opacity: 0; }
+}
+
+@keyframes entrada-suave {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes entrada-lateral {
+  from { opacity: 0; transform: translateX(18px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes latido {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.45; transform: scale(0.82); }
+}
+
+@keyframes flotar-chip {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-5px); }
+}
+
+@keyframes sacudir {
+  0%, 100% { transform: translateX(0); }
+  20%      { transform: translateX(-6px); }
+  40%      { transform: translateX(6px); }
+  60%      { transform: translateX(-4px); }
+  80%      { transform: translateX(4px); }
+}
+
+.sacudir { animation: sacudir 420ms cubic-bezier(0.36, 0.07, 0.19, 0.97); }
+
+.orbe-a { animation: orbe-deriva-a 26s ease-in-out infinite; }
+.orbe-b { animation: orbe-deriva-b 32s ease-in-out infinite; }
+.orbe-c { animation: orbe-deriva-c 22s ease-in-out infinite; }
+.barrido { animation: barrido-luz 9s ease-in-out infinite; }
+.latido  { animation: latido 2s ease-in-out infinite; }
+.flotar  { animation: flotar-chip 5s ease-in-out infinite; }
+
+/* Entradas escalonadas: el retraso lo pone cada elemento con --retraso */
+.entra {
+  opacity: 0;
+  animation: entrada-suave 620ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: var(--retraso, 0ms);
+}
+.entra-lat {
+  opacity: 0;
+  animation: entrada-lateral 620ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: var(--retraso, 0ms);
+}
+
+/* Quien pidió menos movimiento ve la composición quieta */
+@media (prefers-reduced-motion: reduce) {
+  .orbe-a, .orbe-b, .orbe-c, .barrido, .latido, .flotar, .sacudir {
+    animation: none;
+  }
+  .entra, .entra-lat {
+    opacity: 1;
+    animation: none;
+  }
+}

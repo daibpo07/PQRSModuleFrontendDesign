@@ -4,6 +4,7 @@ interface Props {
   view: View
   setView: (v: View) => void
   collapsed: boolean
+  onCerrarSesion: () => void
 }
 
 const navMain = [
@@ -117,7 +118,7 @@ const navBottom = [
   },
 ]
 
-export default function Sidebar({ view, setView, collapsed }: Props) {
+export default function Sidebar({ view, setView, collapsed, onCerrarSesion }: Props) {
   return (
     <aside
       className="flex flex-col shrink-0 transition-all duration-300 overflow-hidden"
@@ -192,6 +193,7 @@ export default function Sidebar({ view, setView, collapsed }: Props) {
         {navBottom.map((item) => (
           <button
             key={item.label}
+            onClick={() => item.label === "Cerrar sesión" && onCerrarSesion()}
             title={collapsed ? item.label : undefined}
             className="w-full flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-white/50 hover:bg-white/10 hover:text-white transition-colors group"
           >

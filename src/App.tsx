@@ -1,4 +1,5 @@
 import { useState } from "react"
+import Login from "@/components/auth/Login"
 import Sidebar from "@/components/layout/Sidebar"
 import Header from "@/components/layout/Header"
 import Panel from "@/components/panel/Panel"
@@ -228,6 +229,7 @@ export default function App() {
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [radicados, setRadicados] = useState<Radicado[]>(initialRadicados)
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
+  const [autenticado, setAutenticado] = useState(false)
 
   const selected = radicados.find((r) => r.id === selectedId) ?? null
 
@@ -242,12 +244,21 @@ export default function App() {
     setView("detail")
   }
 
+  /* Al cerrar sesion se vuelve al acceso y el panel queda como vista de entrada */
+  const cerrarSesion = () => {
+    setAutenticado(false)
+    setView("dashboard")
+    setSelectedId(null)
+  }
+
+  if (!autenticado) return <Login onIngresar={() => setAutenticado(true)} />
+
   return (
     <div
-      className="flex h-screen overflow-hidden bg-[#F8FAFC]"
+      className="flex h-screen overflow-hidden bg-[#F8FAFC] entra"
       style={{ fontFamily: "'Inter', system-ui, sans-serif" }}
     >
-      <Sidebar view={view} setView={setView} collapsed={sidebarCollapsed} />
+      <Sidebar view={view} setView={setView} collapsed={sidebarCollapsed} onCerrarSesion={cerrarSesion} />
       <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
         <Header
           view={view}
