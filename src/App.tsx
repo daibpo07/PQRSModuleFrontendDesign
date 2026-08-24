@@ -1,7 +1,7 @@
 import { useState } from "react"
 import Sidebar from "@/components/layout/Sidebar"
 import Header from "@/components/layout/Header"
-import Dashboard from "@/components/pqrs/Dashboard"
+import Panel from "@/components/panel/Panel"
 import TableView from "@/components/pqrs/TableView"
 import FormNew from "@/components/pqrs/FormNew"
 import DetailView from "@/components/pqrs/DetailView"
@@ -224,7 +224,7 @@ const initialRadicados: Radicado[] = [
 ]
 
 export default function App() {
-  const [view, setView] = useState<View>("table")
+  const [view, setView] = useState<View>("dashboard")
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [radicados, setRadicados] = useState<Radicado[]>(initialRadicados)
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
@@ -255,13 +255,7 @@ export default function App() {
           setSidebarCollapsed={setSidebarCollapsed}
         />
         <main className="flex-1 overflow-auto">
-          {view === "dashboard" && (
-            <Dashboard
-              radicados={radicados}
-              setView={setView}
-              openDetail={openDetail}
-            />
-          )}
+          {view === "dashboard" && <Panel setView={setView} />}
           {(view === "table" || view === "new") && (
             <TableView
               radicados={radicados}
