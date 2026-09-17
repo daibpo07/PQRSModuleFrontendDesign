@@ -196,7 +196,7 @@ export default function InformeCampana({ campana: c, onClose }: Props) {
               </p>
               <div className="flex items-end gap-1.5 h-32">
                 {curva.map(x => (
-                  <div key={x.hora} className="flex-1 flex flex-col justify-end gap-px group" title={`${x.hora}:00 · ${nf(x.enviados)} enviados`}>
+                  <div key={x.hora} className="flex-1 h-full flex flex-col justify-end gap-px group" title={`${x.hora}:00 · ${nf(x.enviados)} enviados`}>
                     <span
                       className="rounded-t transition-all group-hover:opacity-80"
                       style={{ height: `${(x.enviados / maxCurva) * 100}%`, background: "#c7d7fe" }}

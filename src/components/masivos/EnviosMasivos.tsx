@@ -31,7 +31,7 @@ import {
 type Tab = "campanas" | "plantillas" | "audiencias" | "rendimiento"
 type Filtro = "Todas" | EstadoCampana
 
-interface Evento {
+export interface Evento {
   id: number
   tipo: "ok" | "leido" | "respuesta" | "alerta" | "info"
   texto: string
@@ -119,7 +119,7 @@ function Kpi({
 /* ─────────────────────────────────────────────
    Consola de envío en vivo
 ───────────────────────────────────────────── */
-function ConsolaEnVivo({
+export function ConsolaEnVivo({
   campana,
   enVivo,
   tput,
@@ -528,7 +528,12 @@ function TarjetaCampana({
 /* ─────────────────────────────────────────────
    Módulo
 ───────────────────────────────────────────── */
-export default function EnviosMasivos() {
+interface Props {
+  /** Simula el avance de la campaña en curso. Apagarlo congela la consola, útil para capturas y videos. */
+  simularEnvio?: boolean
+}
+
+export default function EnviosMasivos({ simularEnvio = true }: Props) {
   const [tab, setTab] = useState<Tab>("campanas")
   const [campanas, setCampanas] = useState<Campana[]>(mockCampanas)
   const [plantillas, setPlantillas] = useState<Plantilla[]>(mockPlantillas)
@@ -561,7 +566,7 @@ export default function EnviosMasivos() {
 
   /* Simulación del envío en curso */
   useEffect(() => {
-    if (!enVivo || !activa) return
+    if (!simularEnvio || !enVivo || !activa) return
     const t = setInterval(() => {
       const k = ++contador.current
 
@@ -606,7 +611,7 @@ export default function EnviosMasivos() {
       )
     }, 1700)
     return () => clearInterval(t)
-  }, [enVivo, activa?.id])
+  }, [simularEnvio, enVivo, activa?.id])
 
   /* Agregados */
   const agg = campanas.reduce(

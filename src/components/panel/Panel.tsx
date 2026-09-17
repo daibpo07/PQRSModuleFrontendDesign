@@ -38,7 +38,7 @@ const periodos: [Periodo, string][] = [
 /* ─────────────────────────────────────────────
    Tarjeta de módulo contratado
 ───────────────────────────────────────────── */
-function TarjetaModulo({
+export function TarjetaModulo({
   id,
   onAbrir,
   onDetalle,

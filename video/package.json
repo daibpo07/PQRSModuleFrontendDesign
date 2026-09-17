@@ -1,0 +1,35 @@
+{
+  "name": "concept-crm-video",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Video promocional 3D de Herramienta Multi-Tenant construido con Remotion sobre los componentes reales de la app",
+  "scripts": {
+    "studio": "remotion studio",
+    "render": "remotion render VideoCompleto out/herramienta-multi-tenant.mp4",
+    "render:4k": "remotion render VideoCompleto out/herramienta-multi-tenant-4k.mp4 --scale=2",
+    "musica": "node scripts/banda-sonora.mjs",
+    "render:musica": "npm run musica && remotion render VideoConMusica out/herramienta-multi-tenant-con-musica.mp4",
+    "musica:montar": "npm run musica && remotion ffmpeg -y -i out/herramienta-multi-tenant.mp4 -i public/musica/banda-sonora.wav -map 0:v:0 -map 1:a:0 -c:v copy -c:a aac -b:a 256k -shortest out/herramienta-multi-tenant-con-musica.mp4",
+    "still": "remotion still",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@react-three/fiber": "9.7.0",
+    "@remotion/bundler": "4.0.525",
+    "@remotion/cli": "4.0.525",
+    "@remotion/google-fonts": "4.0.525",
+    "@remotion/tailwind-v4": "4.0.525",
+    "@remotion/three": "4.0.525",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "remotion": "4.0.525",
+    "three": "0.186.0"
+  },
+  "devDependencies": {
+    "@types/node": "22.19.1",
+    "@types/react": "19.2.7",
+    "@types/react-dom": "19.2.3",
+    "@types/three": "0.186.0",
+    "typescript": "5.9.3"
+  }
+}

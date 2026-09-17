@@ -34,7 +34,7 @@ export interface Radicado {
   seguimientos: { fecha: string; autor: string; nota: string }[]
 }
 
-const initialRadicados: Radicado[] = [
+export const initialRadicados: Radicado[] = [
   {
     id: "PQR-2026-000012",
     tipo: "Petición",

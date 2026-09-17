@@ -1,0 +1,43 @@
+@import "tailwindcss";
+
+/* Las clases viven en los componentes de la app, fuera de esta carpeta */
+@source "../../src";
+
+@theme {
+  --font-sans: "Inter", system-ui, sans-serif;
+}
+
+/*
+ * Las transiciones y animaciones CSS de la app corren en tiempo real, no por
+ * cuadro: en el render aparecerían a medias. El movimiento lo pone el video.
+ */
+*,
+*::before,
+*::after {
+  transition: none !important;
+  animation: none !important;
+}
+
+/* Sin su animación, las entradas escalonadas de la app quedarían invisibles */
+.entra,
+.entra-lat {
+  opacity: 1 !important;
+}
+
+/* La barra lateral usa 100vh; dentro del marco debe medir lo que mide el marco */
+.marco-app aside {
+  min-height: 0 !important;
+}
+
+/* Modales de la app flotando solos: sin velo y con el halo de las pantallas */
+.modal-flotante .fixed.inset-0 {
+  background: transparent !important;
+  padding: 0 !important;
+}
+
+.modal-flotante .fixed.inset-0 > div {
+  box-shadow:
+    0 0 0 1px rgba(148, 163, 184, 0.35),
+    0 50px 140px -30px rgba(14, 165, 233, 0.55),
+    0 0 120px -10px rgba(30, 58, 138, 0.8) !important;
+}

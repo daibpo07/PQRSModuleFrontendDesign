@@ -1,0 +1,9 @@
+{
+  "intro": { "segundos": 6, "barridos": [], "destellos": [2.8] },
+  "dashboard": { "segundos": 16, "barridos": [4.67, 8.67, 12.67], "destellos": [] },
+  "pqrs": { "segundos": 13, "barridos": [5, 9], "destellos": [6.2, 7.53] },
+  "individuales": { "segundos": 13, "barridos": [5.3, 9.5], "destellos": [7.6] },
+  "masivos": { "segundos": 13, "barridos": [5, 9.67], "destellos": [] },
+  "flujos": { "segundos": 13, "barridos": [5, 9.5], "destellos": [] },
+  "cierre": { "segundos": 6, "barridos": [], "destellos": [1.7] }
+}
