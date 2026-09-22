@@ -8,8 +8,9 @@
      así todos los cortes caen a tiempo
    · intro sin percusión, con campanas y una subida
      hasta el estallido del logo
-   · desde el Dashboard entra el ritmo; desde PQRSDF
-     se suman palmas y hi-hats en semicorcheas
+   · el ritmo entra con la escena multi-tenant;
+     desde PQRSDF se suman palmas y hi-hats en
+     semicorcheas
    · subida antes de cada corte y golpe en el corte
    · barridos en los cambios internos de cada escena
      y campanas en los momentos clave
@@ -43,7 +44,7 @@ const escenas = Object.entries(tiempos).map(([id, e]) => {
 const DURACION = acumulado
 const porId = Object.fromEntries(escenas.map((e) => [e.id, e]))
 const cortes = escenas.slice(1).map((e) => e.inicio)
-const INICIO_RITMO = porId.dashboard.inicio
+const INICIO_RITMO = porId.multitenant.inicio
 const INICIO_MODULOS = porId.pqrs.inicio
 const INICIO_CIERRE = porId.cierre.inicio
 

@@ -21,9 +21,10 @@ export const ALTO = 1080
 
 export const s = (segundos: number) => Math.round(segundos * FPS)
 
-/** Duración de las escenas en cuadros: 80 s en total. */
+/** Duración de las escenas en cuadros: 121 s en total. */
 export const duraciones = {
   intro: s(tiempos.intro.segundos),
+  multitenant: s(tiempos.multitenant.segundos),
   dashboard: s(tiempos.dashboard.segundos),
   pqrs: s(tiempos.pqrs.segundos),
   individuales: s(tiempos.individuales.segundos),
@@ -31,6 +32,13 @@ export const duraciones = {
   flujos: s(tiempos.flujos.segundos),
   cierre: s(tiempos.cierre.segundos),
 }
+
+/** Cuadro en que empieza cada escena, en el orden de tiempos.json. */
+export const inicioEscena = Object.keys(tiempos).reduce<Record<string, number>>((acumulado, id, i, ids) => {
+  const previo = ids[i - 1]
+  acumulado[id] = i === 0 ? 0 : acumulado[previo] + s(tiempos[previo as keyof typeof tiempos].segundos)
+  return acumulado
+}, {})
 
 export const capitulos = {
   dashboard: {
@@ -47,6 +55,17 @@ export const capitulos = {
 export const textos = {
   intro: {
     lema: "Todos tus canales de atención. Una sola plataforma.",
+  },
+  multitenant: {
+    organizaciones: {
+      etiqueta: "Multi-tenant",
+      titulo: "Muchas organizaciones, una sola plataforma",
+      bajada: "Cada una con sus módulos, sus usuarios y sus datos.",
+    },
+    plan: {
+      etiqueta: "Plan y módulos",
+      titulo: "Cada organización contrata solo lo que usa",
+    },
   },
   dashboard: {
     vista: {
@@ -66,6 +85,10 @@ export const textos = {
       etiqueta: "Metas, SLA y reportes",
       titulo: "Decisiones con datos, no con suposiciones",
     },
+    metas: {
+      etiqueta: "Metas y reportes",
+      titulo: "Una meta por indicador y reportes que se programan",
+    },
   },
   pqrs: {
     radicacion: {
@@ -76,6 +99,10 @@ export const textos = {
     seguimiento: {
       etiqueta: "Seguimiento",
       titulo: "Del radicado a la respuesta, sin perder el hilo",
+    },
+    formularios: {
+      etiqueta: "Formularios",
+      titulo: "Formularios propios para radicar",
     },
     reglas: {
       etiqueta: "Buzones y configuración",
@@ -92,6 +119,10 @@ export const textos = {
       etiqueta: "Plantillas",
       titulo: "Mensajes listos, con los datos de cada caso",
     },
+    cierre: {
+      etiqueta: "Cierre y tipificación",
+      titulo: "Cada conversación se cierra clasificada y calificada",
+    },
     transferencias: {
       etiqueta: "Transferencias",
       titulo: "Casos que cambian de asesor sin perder el SLA",
@@ -107,6 +138,10 @@ export const textos = {
       etiqueta: "Envío en vivo",
       titulo: "Sigue cada envío en tiempo real",
     },
+    plantillas: {
+      etiqueta: "Plantillas",
+      titulo: "El mensaje se arma paso a paso",
+    },
     informe: {
       etiqueta: "Informe de campaña",
       titulo: "Entregas, lecturas y respuestas, medidas",
@@ -121,6 +156,10 @@ export const textos = {
     ejecucion: {
       etiqueta: "Flujo en ejecución",
       titulo: "Cada paso con su responsable y su SLA",
+    },
+    trabajo: {
+      etiqueta: "Mi trabajo",
+      titulo: "Cada quien ve sus tareas del día",
     },
     equipo: {
       etiqueta: "Seguimiento y equipo",

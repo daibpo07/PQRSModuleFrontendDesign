@@ -4,6 +4,7 @@ import FlujosEscena from "./escenas/FlujosEscena"
 import IndividualesEscena from "./escenas/IndividualesEscena"
 import Intro from "./escenas/Intro"
 import MasivosEscena from "./escenas/MasivosEscena"
+import MultiTenant from "./escenas/MultiTenant"
 import PanelEscena from "./escenas/PanelEscena"
 import PqrsEscena from "./escenas/PqrsEscena"
 import { duraciones } from "./guion"
@@ -18,6 +19,7 @@ import { duraciones } from "./guion"
 
 export const escenas = [
   { id: "Intro", componente: Intro, duracion: duraciones.intro },
+  { id: "MultiTenant", componente: MultiTenant, duracion: duraciones.multitenant },
   { id: "Dashboard", componente: PanelEscena, duracion: duraciones.dashboard },
   { id: "PQRSDF", componente: PqrsEscena, duracion: duraciones.pqrs },
   { id: "EnviosIndividuales", componente: IndividualesEscena, duracion: duraciones.individuales },

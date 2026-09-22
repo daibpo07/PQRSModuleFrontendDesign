@@ -1,0 +1,33 @@
+[
+  { "escena": "intro", "desde": 1.6, "hasta": 5.4, "texto": "Toda la atención de tu organización, en una sola plataforma." },
+
+  { "escena": "multitenant", "desde": 0.8, "hasta": 4.4, "texto": "Cada organización trabaja en su propio espacio." },
+  { "escena": "multitenant", "desde": 5.1, "hasta": 9.2, "texto": "Y contrata solo los módulos que necesita." },
+
+  { "escena": "dashboard", "desde": 1.2, "hasta": 5.0, "texto": "El panel reúne los indicadores de todos los módulos." },
+  { "escena": "dashboard", "desde": 5.6, "hasta": 9.6, "texto": "Casos gestionados, cumplimiento de SLA y tiempos de respuesta." },
+  { "escena": "dashboard", "desde": 10.2, "hasta": 14.2, "texto": "Cada módulo aporta sus cifras al mismo tablero." },
+  { "escena": "dashboard", "desde": 14.9, "hasta": 18.4, "texto": "Con metas por indicador y reportes programados." },
+
+  { "escena": "pqrs", "desde": 1.0, "hasta": 4.8, "texto": "Las PQRSDF llegan del portal, el correo, la línea y la ventanilla." },
+  { "escena": "pqrs", "desde": 5.4, "hasta": 9.6, "texto": "Cada radicado avanza de recibido a resuelto, con su SLA a la vista." },
+  { "escena": "pqrs", "desde": 10.3, "hasta": 14.0, "texto": "Los formularios de radicación se arman y se publican desde el módulo." },
+  { "escena": "pqrs", "desde": 14.7, "hasta": 19.4, "texto": "Los correos entran como radicados y los tiempos se configuran por categoría." },
+
+  { "escena": "individuales", "desde": 1.0, "hasta": 4.8, "texto": "Las conversaciones de WhatsApp, Instagram y SMS, en un solo lugar." },
+  { "escena": "individuales", "desde": 5.4, "hasta": 9.6, "texto": "Plantillas aprobadas que se llenan con los datos de cada caso." },
+  { "escena": "individuales", "desde": 10.3, "hasta": 14.0, "texto": "Al cerrar, cada conversación queda tipificada y calificada." },
+  { "escena": "individuales", "desde": 14.7, "hasta": 19.4, "texto": "Y las transferencias entre asesores tienen su propio tiempo de respuesta." },
+
+  { "escena": "masivos", "desde": 1.0, "hasta": 4.8, "texto": "Las campañas llegan a miles de personas por varios canales." },
+  { "escena": "masivos", "desde": 5.4, "hasta": 9.6, "texto": "El envío se sigue en vivo, mensaje por mensaje." },
+  { "escena": "masivos", "desde": 10.3, "hasta": 14.0, "texto": "Las plantillas se arman paso a paso y se ven como las recibe el ciudadano." },
+  { "escena": "masivos", "desde": 14.7, "hasta": 19.4, "texto": "Al final, entregas, lecturas, respuestas y fallas quedan medidas." },
+
+  { "escena": "flujos", "desde": 1.0, "hasta": 4.8, "texto": "Cada caso sigue una ruta con pasos, responsables y tiempos." },
+  { "escena": "flujos", "desde": 5.4, "hasta": 9.6, "texto": "El caso avanza al siguiente paso cuando el anterior se cumple." },
+  { "escena": "flujos", "desde": 10.3, "hasta": 14.0, "texto": "Cada persona ve su trabajo del día con su lista de verificación." },
+  { "escena": "flujos", "desde": 14.7, "hasta": 19.4, "texto": "Y el equipo ve sus cargas y los riesgos de SLA a tiempo." },
+
+  { "escena": "cierre", "desde": 0.9, "hasta": 5.2, "texto": "Una plataforma. Cada organización, con los módulos que necesita." }
+]

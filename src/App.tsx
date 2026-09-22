@@ -9,6 +9,7 @@ import DetailView from "@/components/pqrs/DetailView"
 import EnviosIndividuales from "@/components/individuales/EnviosIndividuales"
 import EnviosMasivos from "@/components/masivos/EnviosMasivos"
 import FlujosTrabajo from "@/components/flujos/FlujosTrabajo"
+import Usuarios from "@/components/usuarios/Usuarios"
 
 export type View =
   | "dashboard"
@@ -18,6 +19,7 @@ export type View =
   | "mensajes"
   | "masivos"
   | "flujos"
+  | "usuarios"
 
 export interface Radicado {
   id: string
@@ -282,6 +284,7 @@ export default function App() {
           {view === "mensajes" && <EnviosIndividuales />}
           {view === "masivos" && <EnviosMasivos />}
           {view === "flujos" && <FlujosTrabajo />}
+          {view === "usuarios" && <Usuarios />}
         </main>
       </div>
     </div>

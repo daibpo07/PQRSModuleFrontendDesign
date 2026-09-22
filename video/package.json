@@ -8,8 +8,11 @@
     "render": "remotion render VideoCompleto out/herramienta-multi-tenant.mp4",
     "render:4k": "remotion render VideoCompleto out/herramienta-multi-tenant-4k.mp4 --scale=2",
     "musica": "node scripts/banda-sonora.mjs",
-    "render:musica": "npm run musica && remotion render VideoConMusica out/herramienta-multi-tenant-con-musica.mp4",
+    "subtitulos": "node scripts/subtitulos.mjs",
+    "render:subtitulos": "remotion render VideoConSubtitulos out/herramienta-multi-tenant-subtitulos.mp4",
     "musica:montar": "npm run musica && remotion ffmpeg -y -i out/herramienta-multi-tenant.mp4 -i public/musica/banda-sonora.wav -map 0:v:0 -map 1:a:0 -c:v copy -c:a aac -b:a 256k -shortest out/herramienta-multi-tenant-con-musica.mp4",
+    "musica:montar:subtitulos": "npm run musica && remotion ffmpeg -y -i out/herramienta-multi-tenant-subtitulos.mp4 -i public/musica/banda-sonora.wav -map 0:v:0 -map 1:a:0 -c:v copy -c:a aac -b:a 256k -shortest out/herramienta-multi-tenant-subtitulos-musica.mp4",
+    "render:musica": "npm run musica && remotion render VideoConMusica out/herramienta-multi-tenant-con-musica.mp4",
     "still": "remotion still",
     "typecheck": "tsc --noEmit"
   },

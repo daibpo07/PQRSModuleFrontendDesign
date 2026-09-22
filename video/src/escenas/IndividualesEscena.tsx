@@ -1,13 +1,16 @@
 import { useCurrentFrame } from "remotion"
 import DevicePreview from "@/components/shared/DevicePreview"
 import EnviosIndividuales from "@/components/individuales/EnviosIndividuales"
-import { Bubble, initialChats, mockPlantillas } from "@/components/individuales/EnviosIndividualesData"
+import { Bubble, initialChats, mockHistorial, mockPlantillas } from "@/components/individuales/EnviosIndividualesData"
+import Tipificaciones from "@/components/individuales/Tipificaciones"
 import TransferenciaModal from "@/components/individuales/TransferenciaModal"
+import Transferencias from "@/components/individuales/Transferencias"
 import { mockTransferencias } from "@/components/individuales/TransferenciasData"
 import Capitulo from "../componentes/Capitulo"
 import { Escenario3D, Plano3D } from "../componentes/Escenario3D"
 import Escena from "../componentes/Escena"
 import Espacio from "../componentes/Espacio"
+import Lamina from "../componentes/Lamina"
 import MarcoApp from "../componentes/MarcoApp"
 import ModalFlotante from "../componentes/ModalFlotante"
 import Pantalla from "../componentes/Pantalla"
@@ -17,12 +20,13 @@ import { claves, entrada, flotar, recorrido, salida, tramo } from "../lib/movimi
 import { acentos } from "../marca"
 
 /* ─────────────────────────────────────────────
-   Escena · Envíos Individuales (13 s)
+   Escena · Envíos Individuales (20 s)
 
    0–58     capítulo
    30–170   la bandeja de conversaciones; los mensajes salen de la pantalla
    160–300  tres teléfonos con plantillas; el central se llena con datos reales
-   285–390  una transferencia cuya espera cruza el SLA
+   300–430  cierres tipificados y la bandeja de transferencias
+   430–600  una transferencia cuya espera cruza el SLA, con acercamiento
 ───────────────────────────────────────────── */
 
 const nada = () => {}
@@ -53,14 +57,25 @@ export default function IndividualesEscena() {
     [205, { x: 760, y: 60, z: -1700, rx: 5, ry: -32 }],
   ])
 
+  /* Cierre y transferencias: dos vistas de la app abiertas en V */
+  const cierre = (lado: 1 | -1) =>
+    recorrido(frame, [
+      [300, { x: 560 * lado, y: 780, z: -700, rx: -44, ry: -26 * lado, escala: 0.64 }],
+      [356, { x: 440 * lado, y: 60, z: -220, rx: 0, ry: -22 * lado }, salida],
+      [412, { x: 450 * lado, y: 50, z: -170, rx: 0, ry: -20 * lado }],
+      [444, { x: 700 * lado, y: -700, z: -900, rx: 22 }, entrada],
+    ])
+
+  /* Al final la cámara se acerca a la transferencia: la nota y el SLA quedan legibles */
   const modal = recorrido(frame, [
-    [285, { x: 1300, y: 60, z: -1800, rx: 8, ry: -40, escala: 0.8 }],
-    [335, { x: 270, y: 40, z: -150, rx: 4, ry: -12 }, salida],
-    [390, { x: 250, y: 30, z: -60, rx: 3, ry: -9 }],
+    [430, { x: 1300, y: 60, z: -1800, rx: 8, ry: -40, escala: 0.8 }],
+    [486, { x: 170, y: 40, z: 20, rx: 3, ry: -9, escala: 0.9 }, salida],
+    [560, { x: 80, y: 20, z: 210, rx: 1, ry: -4, escala: 0.95 }, salida],
+    [600, { x: 70, y: 15, z: 230 }],
   ])
 
   /* La espera corre hasta superar los 15 minutos del SLA de aceptación */
-  const espera = Math.round(claves(frame, [[300, 6], [382, 23]]))
+  const espera = Math.round(claves(frame, [[460, 6], [580, 23]]))
 
   const onda = tramo(frame, CON_DATOS, CON_DATOS + 26, [0, 1], salida)
 
@@ -68,7 +83,7 @@ export default function IndividualesEscena() {
     <Escena
       duracion={duraciones.individuales}
       color={acentos.individuales}
-      fondo={<Espacio camara={{ x: Math.sin(frame / 70) * 1.3, y: 0.5, z: 22 - frame * 0.01 }} />}
+      fondo={<Espacio camara={{ x: Math.sin(frame / 70) * 1.3, y: 0.5, z: 22 - frame * 0.006 }} />}
     >
       <Escenario3D>
         <Plano3D {...bandeja} opacidad={tramo(frame, 30, 44) * (1 - tramo(frame, 175, 205))}>
@@ -107,10 +122,10 @@ export default function IndividualesEscena() {
             [llega, { x: 470 * lado, y: 760, z: lado ? -800 : -600, rx: -30, ry: lado ? -20 * lado : -60, escala: lado ? 1.2 : 1.5 }],
             [llega + 52, { x: 480 * lado, y: lado ? 80 : 60, z: lado ? -260 : 0, rx: 0, ry: lado ? -24 * lado : 0 }, salida],
             [290, { x: 490 * lado, y: lado ? 70 : 50, z: lado ? -240 : 40, rx: 0, ry: lado ? -22 * lado : 6 }],
-            [305, { x: 900 * lado, y: -700, z: -500, rx: 30 }, entrada],
+            [308, { x: 900 * lado, y: -700, z: -500, rx: 30 }, entrada],
           ])
           return (
-            <Plano3D key={p.id} {...pose} y={pose.y + flotar(frame, i * 30, 8)} opacidad={tramo(frame, llega, llega + 14) * (1 - tramo(frame, 290, 305))}>
+            <Plano3D key={p.id} {...pose} y={pose.y + flotar(frame, i * 30, 8)} opacidad={tramo(frame, llega, llega + 14) * (1 - tramo(frame, 292, 308))}>
               <div style={{ filter: `drop-shadow(0 40px 60px ${acentos.individuales}55)` }}>
                 <DevicePreview
                   canal={p.canal}
@@ -140,7 +155,19 @@ export default function IndividualesEscena() {
           </Plano3D>
         )}
 
-        <Plano3D {...modal} opacidad={tramo(frame, 285, 300)}>
+        {/* Tipificaciones de las conversaciones cerradas y bandeja de transferencias */}
+        <Plano3D {...cierre(-1)} opacidad={tramo(frame, 300, 314) * (1 - tramo(frame, 420, 444))}>
+          <Lamina ancho={1020} alto={780} desplazamiento={claves(frame, [[360, 0], [415, 240]])}>
+            <Tipificaciones historial={mockHistorial} destacado="h1" />
+          </Lamina>
+        </Plano3D>
+        <Plano3D {...cierre(1)} opacidad={tramo(frame, 306, 320) * (1 - tramo(frame, 420, 444))}>
+          <Lamina ancho={1020} alto={780} desplazamiento={claves(frame, [[360, 0], [415, 200]])}>
+            <Transferencias transferencias={mockTransferencias} onAbrir={nada} />
+          </Lamina>
+        </Plano3D>
+
+        <Plano3D {...modal} opacidad={tramo(frame, 430, 446)}>
           <ModalFlotante ancho={1040} alto={780}>
             <TransferenciaModal
               transferencia={{ ...transferencia, esperaMin: espera }}
@@ -155,16 +182,9 @@ export default function IndividualesEscena() {
       <Capitulo {...capitulos.individuales} color={acentos.individuales} tamano={132} />
 
       <Rotulo inicio={60} fin={150} {...t.conversaciones} style={{ left: 110, top: 340 }} ancho={620} />
-      <Rotulo
-        inicio={176}
-        fin={290}
-        {...t.plantillas}
-        centrado
-        tamano={48}
-        ancho={1500}
-        style={{ left: 210, top: 36 }}
-      />
-      <Rotulo inicio={300} fin={400} {...t.transferencias} style={{ left: 100, top: 360 }} ancho={560} tamano={56} />
+      <Rotulo inicio={176} fin={290} {...t.plantillas} centrado tamano={48} ancho={1500} style={{ left: 210, top: 36 }} />
+      <Rotulo inicio={322} fin={418} {...t.cierre} centrado tamano={50} ancho={1500} style={{ left: 210, top: 70 }} />
+      <Rotulo inicio={452} fin={540} {...t.transferencias} style={{ left: 100, top: 360 }} ancho={520} tamano={56} />
     </Escena>
   )
 }

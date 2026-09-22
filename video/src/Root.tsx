@@ -4,6 +4,7 @@ import "./estilos.css"
 import { ALTO, ANCHO, FPS } from "./guion"
 import VideoCompleto, { duracionTotal, escenas } from "./VideoCompleto"
 import VideoConMusica from "./VideoConMusica"
+import VideoConSubtitulos from "./VideoConSubtitulos"
 
 loadFont("normal", {
   weights: ["400", "500", "600", "700", "800"],
@@ -17,6 +18,7 @@ export default function Root() {
     <>
       <Composition id="VideoCompleto" component={VideoCompleto} durationInFrames={duracionTotal} {...formato} />
       <Composition id="VideoConMusica" component={VideoConMusica} durationInFrames={duracionTotal} {...formato} />
+      <Composition id="VideoConSubtitulos" component={VideoConSubtitulos} durationInFrames={duracionTotal} {...formato} />
       <Folder name="Escenas">
         {escenas.map(({ id, componente, duracion }) => (
           <Composition key={id} id={id} component={componente} durationInFrames={duracion} {...formato} />

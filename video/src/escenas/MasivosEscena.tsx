@@ -3,6 +3,7 @@ import DevicePreview from "@/components/shared/DevicePreview"
 import EnviosMasivos, { ConsolaEnVivo, type Evento } from "@/components/masivos/EnviosMasivos"
 import { mockCampanas, mockPlantillas, seedNoise, type Campana } from "@/components/masivos/EnviosMasivosData"
 import InformeCampana from "@/components/masivos/InformeCampana"
+import PlantillaEditor from "@/components/masivos/PlantillaEditor"
 import Capitulo from "../componentes/Capitulo"
 import ChorroParticulas from "../componentes/ChorroParticulas"
 import { Escenario3D, Plano3D } from "../componentes/Escenario3D"
@@ -17,12 +18,13 @@ import { claves, entrada, flotar, recorrido, salida, tramo } from "../lib/movimi
 import { acentos } from "../marca"
 
 /* ─────────────────────────────────────────────
-   Escena · Envíos Masivos (13 s)
+   Escena · Envíos Masivos (20 s)
 
    0–58     capítulo
    30–200   la vista de campañas con la consola en vivo
-   150–300  la consola sola en el espacio: el envío avanza y los mensajes salen
-   290–390  informe de la campaña y la plantilla en el teléfono
+   150–300  la consola sola: el envío avanza y la cámara entra al anillo
+   300–430  el editor de plantillas, con la vista previa del teléfono
+   430–600  informe de la campaña, recorrido con calma, y la plantilla enviada
 ───────────────────────────────────────────── */
 
 const nada = () => {}
@@ -86,23 +88,34 @@ export default function MasivosEscena() {
     [205, { x: -800, y: 60, z: -1700, rx: 5, ry: 32 }],
   ])
 
+  /* A mitad del envío la cámara entra al anillo de progreso y a las métricas */
   const consola = recorrido(frame, [
     [150, { y: 760, z: -900, rx: -40, escala: 1.15 }],
     [205, { y: 60, z: 0, rx: 12 }, salida],
-    [285, { y: 50, z: 60, rx: 8 }],
-    [302, { y: -760, z: -400, rx: 30 }, entrada],
+    [232, { y: 50, z: 60, rx: 8 }],
+    [268, { x: 200, y: 20, z: 430, rx: 3 }, salida],
+    [290, { x: 190, y: 10, z: 450 }],
+    [306, { x: 180, y: -760, z: -400, rx: 30 }, entrada],
+  ])
+
+  /* El editor de plantillas: pasos a la izquierda, teléfono a la derecha */
+  const editor = recorrido(frame, [
+    [300, { x: 0, y: 780, z: -900, rx: -38, escala: 0.92 }],
+    [356, { x: 0, y: 40, z: -60, rx: 5 }, salida],
+    [412, { x: 0, y: 30, z: 10, rx: 3 }],
+    [444, { x: 0, y: -760, z: -700, rx: 24 }, entrada],
   ])
 
   const informe = recorrido(frame, [
-    [290, { x: 1300, y: 60, z: -1800, rx: 8, ry: -40, escala: 0.66 }],
-    [340, { x: 250, y: 60, z: -120, rx: 4, ry: -12 }, salida],
-    [390, { x: 235, y: 50, z: -40, rx: 3, ry: -9 }],
+    [430, { x: 1300, y: 60, z: -1800, rx: 8, ry: -40, escala: 0.66 }],
+    [490, { x: 250, y: 60, z: -120, rx: 4, ry: -12 }, salida],
+    [600, { x: 235, y: 50, z: -40, rx: 3, ry: -9 }],
   ])
 
   const telefono = recorrido(frame, [
-    [300, { x: -1150, y: 120, z: 200, ry: 40, escala: 1.25 }],
-    [350, { x: -600, y: 70, z: 150, ry: 20 }, salida],
-    [390, { x: -610, y: 60, z: 170, ry: 17 }],
+    [446, { x: -1150, y: 120, z: 200, ry: 40, escala: 1.25 }],
+    [504, { x: -600, y: 70, z: 150, ry: 20 }, salida],
+    [600, { x: -610, y: 60, z: 170, ry: 17 }],
   ])
 
   return (
@@ -110,8 +123,8 @@ export default function MasivosEscena() {
       duracion={duraciones.masivos}
       color={acentos.masivos}
       fondo={
-        <Espacio camara={{ x: Math.sin(frame / 75) * 1.2, y: 0.5, z: 22 - frame * 0.01 }}>
-          <ChorroParticulas inicio={180} fin={300} colores={["#25D366", acentos.masivos, "#ffffff", "#7aa2ff"]} />
+        <Espacio camara={{ x: Math.sin(frame / 75) * 1.2, y: 0.5, z: 22 - frame * 0.006 }}>
+          <ChorroParticulas inicio={180} fin={304} colores={["#25D366", acentos.masivos, "#ffffff", "#7aa2ff"]} />
         </Espacio>
       }
     >
@@ -124,7 +137,7 @@ export default function MasivosEscena() {
           </Pantalla>
         </Plano3D>
 
-        <Plano3D {...consola} y={consola.y + flotar(frame, 0, 6, 24)} opacidad={tramo(frame, 150, 165) * (1 - tramo(frame, 287, 302))}>
+        <Plano3D {...consola} y={consola.y + flotar(frame, 0, 6, 24)} opacidad={tramo(frame, 150, 165) * (1 - tramo(frame, 291, 306))}>
           <div
             style={{
               width: 1180,
@@ -136,13 +149,20 @@ export default function MasivosEscena() {
           </div>
         </Plano3D>
 
-        <Plano3D {...informe} opacidad={tramo(frame, 290, 305)}>
-          <ModalFlotante ancho={1024} alto={1000} desplazamiento={claves(frame, [[345, 0], [390, 180]])}>
+        {/* El editor con el que se arma el mensaje */}
+        <Plano3D {...editor} opacidad={tramo(frame, 300, 316) * (1 - tramo(frame, 420, 444))}>
+          <ModalFlotante ancho={1180} alto={860}>
+            <PlantillaEditor inicial={plantilla} onClose={nada} onGuardar={nada} />
+          </ModalFlotante>
+        </Plano3D>
+
+        <Plano3D {...informe} opacidad={tramo(frame, 430, 446)}>
+          <ModalFlotante ancho={1024} alto={1000} desplazamiento={claves(frame, [[500, 0], [596, 420]])}>
             <InformeCampana campana={completada} onClose={nada} />
           </ModalFlotante>
         </Plano3D>
 
-        <Plano3D {...telefono} y={telefono.y + flotar(frame, 40, 8)} opacidad={tramo(frame, 300, 315)}>
+        <Plano3D {...telefono} y={telefono.y + flotar(frame, 40, 8)} opacidad={tramo(frame, 446, 462)}>
           <div style={{ filter: `drop-shadow(0 40px 60px ${acentos.masivos}66)` }}>
             <DevicePreview
               canal={plantilla.canal}
@@ -160,7 +180,8 @@ export default function MasivosEscena() {
 
       <Rotulo inicio={60} fin={150} {...t.campanas} style={{ right: 110, top: 340 }} ancho={620} />
       <Rotulo inicio={176} fin={290} {...t.envio} centrado tamano={52} ancho={1500} style={{ left: 210, top: 90 }} />
-      <Rotulo inicio={306} fin={400} {...t.informe} centrado tamano={48} ancho={1500} style={{ left: 210, top: 36 }} />
+      <Rotulo inicio={322} fin={418} {...t.plantillas} centrado tamano={50} ancho={1500} style={{ left: 210, top: 44 }} />
+      <Rotulo inicio={456} fin={588} {...t.informe} centrado tamano={48} ancho={1500} style={{ left: 210, top: 36 }} />
     </Escena>
   )
 }

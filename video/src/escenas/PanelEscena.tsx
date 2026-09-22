@@ -1,27 +1,31 @@
 import { useCurrentFrame } from "remotion"
+import MetasSla from "@/components/panel/MetasSla"
 import Panel, { TarjetaModulo } from "@/components/panel/Panel"
 import { TarjetaKpi } from "@/components/panel/PanelCharts"
 import { kpisTransversales, modulos, ordenModulos } from "@/components/panel/PanelData"
+import Reportes from "@/components/panel/Reportes"
 import Capitulo from "../componentes/Capitulo"
 import { Escenario3D, Plano3D } from "../componentes/Escenario3D"
 import Escena from "../componentes/Escena"
 import Espacio from "../componentes/Espacio"
+import Lamina from "../componentes/Lamina"
 import MarcoApp from "../componentes/MarcoApp"
 import Pantalla from "../componentes/Pantalla"
 import Rotulo from "../componentes/Rotulo"
 import { capitulos, duraciones, textos } from "../guion"
-import { claves, contar, entrada, salida, tramo } from "../lib/movimiento"
+import { claves, contar, entrada, recorrido, salida, tramo } from "../lib/movimiento"
 import { acentos } from "../marca"
 
 /* ─────────────────────────────────────────────
-   Escena · Dashboard (16 s)
+   Escena · Dashboard (19 s)
 
    Los tiempos de abajo van después del capítulo
    (DESFASE cuadros):
    0–110    la app llega desde el fondo y recorre el panel
    110–230  la pantalla se acuesta y de ella se levantan los KPI
    230–350  los cuatro módulos se abren en arco
-   350–450  la pantalla vuelve al frente y la cámara se acerca
+   350–420  la pantalla vuelve al frente y la cámara se acerca
+   440–540  metas por indicador y reportes programados
 ───────────────────────────────────────────── */
 
 const DESFASE = 30
@@ -34,22 +38,32 @@ export default function PanelEscena() {
 
   /* ── Pantalla con la app real ── */
   const pantalla = {
-    x: claves(f, [[0, 760], [80, 330, salida], [110, 310], [190, 0], [350, 0], [405, -300], [450, -270]]),
-    y: claves(f, [[0, 140], [80, 30, salida], [110, 20], [190, 250], [340, 300], [405, 10]]),
-    z: claves(f, [[0, -3400], [80, -220, salida], [110, -180], [190, -650], [340, -1500], [405, -120], [450, 60]]),
-    rx: claves(f, [[0, 24], [80, 7, salida], [110, 5], [190, 66], [340, 72], [405, 5]]),
-    ry: claves(f, [[0, -44], [80, -16, salida], [110, -13], [190, 0], [340, 0], [405, 15], [450, 12]]),
-    escala: claves(f, [[110, 0.62], [190, 0.95], [340, 0.95], [405, 0.62]]),
+    x: claves(f, [[0, 760], [80, 330, salida], [110, 310], [190, 0], [350, 0], [375, -300], [415, -270]]),
+    y: claves(f, [[0, 140], [80, 30, salida], [110, 20], [190, 250], [340, 300], [375, 10]]),
+    z: claves(f, [[0, -3400], [80, -220, salida], [110, -180], [190, -650], [340, -1500], [375, -120], [415, 60], [442, -900]]),
+    rx: claves(f, [[0, 24], [80, 7, salida], [110, 5], [190, 66], [340, 72], [375, 5], [442, 20]]),
+    ry: claves(f, [[0, -44], [80, -16, salida], [110, -13], [190, 0], [340, 0], [375, 15], [415, 12]]),
+    escala: claves(f, [[110, 0.62], [190, 0.95], [340, 0.95], [375, 0.62]]),
   }
-  const opacidadPantalla = tramo(f, 0, 14) * claves(f, [[290, 1], [340, 0.3], [390, 1]])
-  const desplazamiento = claves(f, [[0, 0], [55, 0], [108, 560], [190, 0], [405, 0], [450, 640]])
-  const brillo = f < 200 ? tramo(f, 24, 96) : tramo(f, 392, 450)
+  const opacidadPantalla =
+    tramo(f, 0, 14) * claves(f, [[290, 1], [340, 0.3], [365, 1], [422, 1], [442, 0]])
+  const desplazamiento = claves(f, [[0, 0], [55, 0], [108, 560], [190, 0], [375, 0], [422, 640]])
+  const brillo = f < 200 ? tramo(f, 24, 96) : tramo(f, 362, 420)
 
   /* ── Cámara: órbita suave mientras los módulos están en arco ── */
+  /* La cámara entra sobre los indicadores para que las cifras se lean, y vuelve */
   const camara = {
     ry: claves(f, [[220, -6], [345, 6], [405, 0]]),
-    z: claves(f, [[405, 0], [450, 140, entrada]]),
+    z: claves(f, [[170, 0], [205, 320, salida], [236, 320], [262, 0], [375, 0], [415, 140, entrada], [442, 0], [540, 90]]),
   }
+
+  /* Metas y reportes: las dos subvistas que cierran el panel */
+  const informes = (lado: 1 | -1) =>
+    recorrido(f, [
+      [440, { x: 520 * lado, y: 800, z: -600, rx: -48, ry: -26 * lado, escala: 0.64 }],
+      [496, { x: 420 * lado, y: 80, z: -240, rx: 0, ry: -22 * lado }, salida],
+      [570, { x: 435 * lado, y: 70, z: -160, rx: 0, ry: -20 * lado }],
+    ])
 
   return (
     <Escena
@@ -129,6 +143,13 @@ export default function PanelEscena() {
             </Plano3D>
           )
         })}
+        {([-1, 1] as const).map((lado) => (
+          <Plano3D key={lado} {...informes(lado)} opacidad={tramo(f, 440, 456)}>
+            <Lamina ancho={1160} alto={780} desplazamiento={claves(f, [[500, 0], [560, 210]])}>
+              {lado === -1 ? <MetasSla /> : <Reportes />}
+            </Lamina>
+          </Plano3D>
+        ))}
       </Escenario3D>
 
       <Capitulo {...capitulos.dashboard} color={acentos.dashboard} />
@@ -153,12 +174,21 @@ export default function PanelEscena() {
         style={{ left: 260, top: 110 }}
       />
       <Rotulo
-        inicio={DESFASE + 398}
-        fin={DESFASE + 470}
+        inicio={DESFASE + 368}
+        fin={DESFASE + 430}
         {...t.cierre}
         style={{ right: 110, top: 370 }}
         ancho={600}
         tamano={60}
+      />
+      <Rotulo
+        inicio={DESFASE + 462}
+        fin={DESFASE + 556}
+        {...t.metas}
+        centrado
+        tamano={50}
+        ancho={1500}
+        style={{ left: 210, top: 60 }}
       />
     </Escena>
   )

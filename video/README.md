@@ -1,6 +1,6 @@
 # Video 3D de Herramienta Multi-Tenant
 
-Video promocional de 80 s hecho con [Remotion](https://www.remotion.dev) sobre los **componentes reales** de la app (`../src`). Si cambia el diseño de la app, basta con volver a renderizar.
+Video promocional de 2 minutos hecho con [Remotion](https://www.remotion.dev) sobre los **componentes reales** de la app (`../src`). Si cambia el diseño de la app, basta con volver a renderizar.
 
 ## Uso
 
@@ -11,12 +11,15 @@ npm run studio          # vista previa con línea de tiempo en el navegador
 npm run render          # MP4 1080p sin música en out/herramienta-multi-tenant.mp4
 npm run render:4k       # MP4 4K sin música
 npm run musica          # genera la banda sonora en public/musica/banda-sonora.wav
+npm run subtitulos      # genera out/herramienta-multi-tenant.srt
 npm run musica:montar   # le pone la música al MP4 ya renderizado, sin volver a renderizar
 npm run render:musica   # renderiza desde cero la versión con música
+npm run render:subtitulos          # MP4 con los subtítulos incrustados
+npm run musica:montar:subtitulos   # le pone la música a esa versión
 npm run typecheck
 ```
 
-En el Studio, `VideoCompleto` es el video sin música, `VideoConMusica` es el mismo video con la banda sonora (antes hay que correr `npm run musica`), y la carpeta **Escenas** tiene cada escena por separado para iterar más rápido.
+En el Studio hay tres composiciones del video entero — `VideoCompleto` (sin música), `VideoConMusica` (antes hay que correr `npm run musica`) y `VideoConSubtitulos` — y la carpeta **Escenas**, con cada escena por separado para iterar más rápido.
 
 ## Música
 
@@ -31,7 +34,7 @@ La banda sonora es original y se sintetiza por código en `scripts/banda-sonora.
 **Estructura.** A 120 BPM, en La menor:
 
 - **Intro:** ambiental, crece hasta el estallido del logo.
-- **Dashboard:** entra el ritmo.
+- **Multi-tenant:** entra el ritmo.
 - **Módulos:** se suman palmas y semicorcheas.
 - **Cierre:** resuelve en Do mayor y se apaga con el fundido a negro.
 
@@ -46,20 +49,34 @@ La banda sonora es original y se sintetiza por código en `scripts/banda-sonora.
 | Escena | Duración | Qué se ve |
 |---|---|---|
 | Intro | 6 s | El logo se forma con partículas; aparecen el nombre y el lema |
-| 01 · Dashboard | 16 s | Panel real, KPI que se levantan contando, módulos en arco |
-| 02 · PQRSDF | 13 s | Bandeja con SLA y canales entrando; un radicado avanza de Recibido a Resuelto; buzones y configuración en V |
-| 03 · Envíos Individuales | 13 s | Los mensajes salen del chat; tres teléfonos con plantillas; transferencia que cruza el SLA |
-| 04 · Envíos Masivos | 13 s | Campañas; consola en vivo con chorro de partículas; informe y plantilla |
-| 05 · Flujos de Trabajo | 13 s | Vista de flujos; un caso recorre la cadena de pasos; ejecuciones y cargas en V |
+| Multi-tenant | 10 s | Tres organizaciones con distintos módulos contratados; acercamiento al plan en el panel real |
+| 01 · Dashboard | 19 s | Panel real, KPI que se levantan contando, módulos en arco, metas y reportes |
+| 02 · PQRSDF | 20 s | Bandeja con SLA y canales entrando; un radicado avanza de Recibido a Resuelto; formularios de radicación; buzones y configuración |
+| 03 · Envíos Individuales | 20 s | Los mensajes salen del chat; tres teléfonos con plantillas; tipificaciones y bandeja de transferencias; una transferencia que cruza el SLA |
+| 04 · Envíos Masivos | 20 s | Campañas; consola en vivo con chorro de partículas; editor de plantillas; informe recorrido y plantilla enviada |
+| 05 · Flujos de Trabajo | 20 s | Vista de flujos; un caso recorre la cadena de pasos; mi trabajo del día; ejecuciones y cargas del equipo |
 | Cierre | 6 s | Los módulos orbitan el logo; nombre y lema final |
 
-Duraciones y textos están en `src/guion.ts`. El orden de las escenas está en `src/VideoCompleto.tsx`.
+Los textos están en `src/guion.ts`, las duraciones en `src/tiempos.json` y el orden en `src/VideoCompleto.tsx`.
+
+**Ritmo.** Cada módulo dura 20 s y pasa por cuatro paradas: la vista general, la pieza protagonista, una vista adicional del módulo y un cierre con dos subvistas abiertas en V. Para alargar o acortar una escena, cambia sus segundos en `src/tiempos.json` y reparte los cuadros entre esas paradas.
+
+**Planos de detalle.** En cada escena la cámara se acerca a una pieza real para que se pueda leer: los indicadores del panel, el estado del radicado, la transferencia con su SLA, la consola de envío y la cadena de pasos. Se logra con las claves de `escala` y `z` de cada pose, no con recortes.
+
+## Subtítulos
+
+`src/subtitulos.json` tiene las líneas con tiempos relativos a cada escena. Ese texto es a la vez el **guion de locución** para cuando se grabe la voz en off.
+
+- `npm run subtitulos` genera `out/herramienta-multi-tenant.srt` para las plataformas que muestran subtítulos aparte.
+- `VideoConSubtitulos` los incrusta en la imagen, para redes donde se ve sin sonido.
 
 ## Estructura
 
 | Ruta | Qué contiene |
 |---|---|
-| `src/guion.ts` | Duraciones, capítulos y todos los textos en pantalla |
+| `src/guion.ts` | Capítulos y todos los textos en pantalla |
+| `src/tiempos.json` | Duración de cada escena y momentos que sigue la música |
+| `src/subtitulos.json` | Subtítulos y guion de locución |
 | `src/marca.ts` | Nombre, colores, color de cada capítulo y logo |
 | `src/VideoCompleto.tsx` | Orden de las escenas |
 | `src/escenas/` | Una escena por archivo |
@@ -72,6 +89,9 @@ Duraciones y textos están en `src/guion.ts`. El orden de las escenas está en `
 | `src/componentes/MarcoApp.tsx` | Barra lateral y encabezado reales alrededor de un módulo |
 | `src/componentes/Lamina.tsx` | Una subvista suelta en el espacio, sin barra lateral |
 | `src/componentes/ModalFlotante.tsx` | Un modal real de la app flotando solo |
+| `src/componentes/Recorte.tsx` | Muestra una región de una vista real a tamaño legible |
+| `src/componentes/TarjetaOrganizacion.tsx` | Una organización con su plan y sus módulos |
+| `src/componentes/Subtitulos.tsx` | Subtítulos incrustados |
 | `src/componentes/Rotulo.tsx`, `Chip3D.tsx`, `NombreMarca.tsx` | Titulares, etiquetas y nombre animado |
 | `src/lib/movimiento.ts` | `tramo`, `claves`, `recorrido`, `contar` y `flotar` para animar por cuadro |
 | `src/lib/entorno.ts` | Neutraliza `scrollIntoView` dentro de las escenas |

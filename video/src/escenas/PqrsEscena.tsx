@@ -3,6 +3,8 @@ import { initialRadicados, type Radicado } from "@/App"
 import BuzonCorreos from "@/components/pqrs/BuzonCorreos"
 import Configuracion from "@/components/pqrs/Configuracion"
 import DetailView from "@/components/pqrs/DetailView"
+import FormNew from "@/components/pqrs/FormNew"
+import GestionFormularios from "@/components/pqrs/GestionFormularios"
 import TableView from "@/components/pqrs/TableView"
 import Capitulo from "../componentes/Capitulo"
 import Chip3D from "../componentes/Chip3D"
@@ -18,12 +20,13 @@ import { claves, entrada, flotar, mezclar, recorrido, salida, tramo } from "../l
 import { acentos } from "../marca"
 
 /* ─────────────────────────────────────────────
-   Escena · PQRSDF (13 s)
+   Escena · PQRSDF (20 s)
 
    0–58     capítulo
    30–150   la bandeja de radicados llega; los canales vuelan hacia ella
-   150–300  un radicado avanza de Recibido a Resuelto
-   270–390  buzones de correo y configuración abiertos en V
+   150–300  un radicado avanza de Recibido a Resuelto, con acercamiento
+   300–430  formularios de radicación: gestión y formulario público
+   430–600  buzones de correo y configuración abiertos en V
 ───────────────────────────────────────────── */
 
 const nada = () => {}
@@ -73,28 +76,40 @@ export default function PqrsEscena() {
   ])
   const opacidadTabla = tramo(frame, 30, 44) * claves(frame, [[150, 1], [215, 0.25], [280, 0.25], [300, 0]])
 
+  /* Al cambiar a Resuelto la cámara se acerca: el estado del proceso queda legible */
   const detalle = recorrido(frame, [
     [150, { x: 1250, y: 80, z: -1800, rx: 10, ry: -40, escala: 0.88 }],
     [200, { x: 300, y: 20, z: -100, rx: 4, ry: -10 }, salida],
-    [270, { x: 280, y: 10, z: 0, rx: 3, ry: -6 }],
-    [305, { x: 240, y: -760, z: -420, rx: -30, ry: 0 }, entrada],
+    [228, { x: 280, y: 10, z: 0, rx: 3, ry: -6 }],
+    [262, { x: 150, y: 210, z: 240, rx: 1, ry: -3, escala: 1 }, salida],
+    [292, { x: 140, y: 220, z: 260 }],
+    [312, { x: 140, y: -800, z: -420, rx: -30, ry: 0 }, entrada],
   ])
+
+  /* Formularios: la gestión a la izquierda y el formulario que ve el ciudadano a la derecha */
+  const formularios = (lado: 1 | -1) =>
+    recorrido(frame, [
+      [300, { x: 560 * lado, y: 780, z: -700, rx: -44, ry: -26 * lado, escala: 0.66 }],
+      [356, { x: 450 * lado, y: 60, z: -220, rx: 0, ry: -22 * lado }, salida],
+      [412, { x: 460 * lado, y: 50, z: -170, rx: 0, ry: -20 * lado }],
+      [444, { x: 700 * lado, y: -700, z: -900, rx: 22 }, entrada],
+    ])
 
   const libro = (lado: 1 | -1) =>
     recorrido(frame, [
-      [270, { x: 520 * lado, y: 820, z: -600, rx: -50, ry: -28 * lado, escala: 0.68 }],
-      [322, { x: 420 * lado, y: 90, z: -250, rx: 0, ry: -23 * lado }, salida],
-      [390, { x: 435 * lado, y: 80, z: -150, rx: 0, ry: -21 * lado }],
+      [430, { x: 520 * lado, y: 820, z: -600, rx: -50, ry: -28 * lado, escala: 0.68 }],
+      [486, { x: 420 * lado, y: 90, z: -250, rx: 0, ry: -23 * lado }, salida],
+      [600, { x: 435 * lado, y: 80, z: -150, rx: 0, ry: -21 * lado }],
     ])
 
-  const camara = { z: claves(frame, [[270, 0], [390, 110]]) }
+  const camara = { z: claves(frame, [[430, 0], [600, 110]]) }
   const insignia = 1 + 0.3 * Math.max(rebote(frame, 186), rebote(frame, 226))
 
   return (
     <Escena
       duracion={duraciones.pqrs}
       color={acentos.pqrs}
-      fondo={<Espacio camara={{ x: Math.sin(frame / 80) * 1.2, y: 0.6, z: 22 - frame * 0.01 }} />}
+      fondo={<Espacio camara={{ x: Math.sin(frame / 80) * 1.2, y: 0.6, z: 22 - frame * 0.006 }} />}
     >
       <Escenario3D camara={camara}>
         <Plano3D {...tabla} opacidad={opacidadTabla}>
@@ -122,7 +137,7 @@ export default function PqrsEscena() {
           )
         })}
 
-        <Plano3D {...detalle} opacidad={tramo(frame, 150, 164) * (1 - tramo(frame, 290, 305))}>
+        <Plano3D {...detalle} opacidad={tramo(frame, 150, 164) * (1 - tramo(frame, 296, 312))}>
           <Lamina ancho={820} alto={900} desplazamiento={claves(frame, [[228, 0], [264, 330]])}>
             <DetailView radicado={radicado} onBack={nada} />
           </Lamina>
@@ -140,12 +155,26 @@ export default function PqrsEscena() {
           <Chip3D texto={radicado.estado} color={estadoColor[radicado.estado]} detalle={radicado.id} tamano={28} />
         </Plano3D>
 
+        {/* Formularios de radicación */}
+        <Plano3D {...formularios(-1)} opacidad={tramo(frame, 300, 314) * (1 - tramo(frame, 420, 444))}>
+          <Lamina ancho={980} alto={780} desplazamiento={claves(frame, [[360, 0], [415, 190]])}>
+            <GestionFormularios />
+          </Lamina>
+        </Plano3D>
+        <Plano3D {...formularios(1)} opacidad={tramo(frame, 306, 320) * (1 - tramo(frame, 420, 444))}>
+          <Lamina ancho={860} alto={780}>
+            <div className="p-6">
+              <FormNew onSubmit={nada} onCancel={nada} />
+            </div>
+          </Lamina>
+        </Plano3D>
+
         {([-1, 1] as const).map((lado) => (
-          <Plano3D key={lado} {...libro(lado)} opacidad={tramo(frame, 270, 284)}>
+          <Plano3D key={lado} {...libro(lado)} opacidad={tramo(frame, 430, 444)}>
             <Lamina
               ancho={1100}
               alto={760}
-              desplazamiento={claves(frame, [[322, 0], [385, lado === -1 ? 260 : 200]])}
+              desplazamiento={claves(frame, [[486, 0], [580, lado === -1 ? 280 : 210]])}
             >
               {lado === -1 ? <BuzonCorreos /> : <Configuracion />}
             </Lamina>
@@ -157,15 +186,8 @@ export default function PqrsEscena() {
 
       <Rotulo inicio={60} fin={150} {...t.radicacion} style={{ right: 110, top: 340 }} ancho={620} />
       <Rotulo inicio={172} fin={272} {...t.seguimiento} style={{ left: 110, top: 400 }} ancho={560} tamano={58} />
-      <Rotulo
-        inicio={292}
-        fin={400}
-        {...t.reglas}
-        centrado
-        tamano={52}
-        ancho={1500}
-        style={{ left: 210, top: 70 }}
-      />
+      <Rotulo inicio={322} fin={418} {...t.formularios} centrado tamano={52} ancho={1500} style={{ left: 210, top: 70 }} />
+      <Rotulo inicio={452} fin={588} {...t.reglas} centrado tamano={52} ancho={1500} style={{ left: 210, top: 70 }} />
     </Escena>
   )
 }
