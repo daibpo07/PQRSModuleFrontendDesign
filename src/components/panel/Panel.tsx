@@ -3,6 +3,8 @@ import type { View } from "@/App"
 import MetasSla from "./MetasSla"
 import { BarraParticipacion, ColumnasApiladas, Sparkline, TarjetaKpi } from "./PanelCharts"
 import PorModulo from "./PorModulo"
+import EnviosProgramados from "./EnviosProgramados"
+import { mockProgramaciones, type Programacion } from "./ReporteriaData"
 import Reportes from "./Reportes"
 import {
   actividadDiaria,
@@ -18,11 +20,12 @@ import {
   resumenModulos,
   tenant,
   tinta,
+  type Reporte,
   estadoDeMeta,
   type ModuloId,
 } from "./PanelData"
 
-type Subvista = "resumen" | "modulos" | "metas" | "reportes"
+type Subvista = "resumen" | "modulos" | "metas" | "reportes" | "envios"
 type Periodo = "7d" | "30d" | "trimestre"
 
 interface Props {
@@ -139,6 +142,11 @@ export function TarjetaModulo({
 ───────────────────────────────────────────── */
 export default function Panel({ setView }: Props) {
   const [subvista, setSubvista] = useState<Subvista>("resumen")
+  /* Un reporte que no cabe en una descarga viaja hasta la pestaña de envíos */
+  const [reportePendiente, setReportePendiente] = useState<Reporte | null>(null)
+  const [programaciones, setProgramaciones] = useState<Programacion[]>(mockProgramaciones)
+
+  const enviosConError = programaciones.filter(p => p.estado === "Con error").length
   const [periodo, setPeriodo] = useState<Periodo>("30d")
   const [moduloFoco, setModuloFoco] = useState<ModuloId>("pqrs")
 
@@ -155,6 +163,7 @@ export default function Panel({ setView }: Props) {
     ["modulos", "Por módulo", null],
     ["metas", "Metas y SLA", metasFuera > 0 ? metasFuera : null],
     ["reportes", "Reportes", null],
+    ["envios", "Envíos programados", enviosConError > 0 ? enviosConError : null],
   ]
 
   return (
@@ -440,7 +449,23 @@ export default function Panel({ setView }: Props) {
 
       {subvista === "metas" && <MetasSla />}
 
-      {subvista === "reportes" && <Reportes />}
+      {subvista === "reportes" && (
+        <Reportes
+          onProgramar={r => {
+            setReportePendiente(r)
+            setSubvista("envios")
+          }}
+        />
+      )}
+
+      {subvista === "envios" && (
+        <EnviosProgramados
+          lista={programaciones}
+          setLista={setProgramaciones}
+          reportePendiente={reportePendiente}
+          onConsumirPendiente={() => setReportePendiente(null)}
+        />
+      )}
     </div>
   )
 }

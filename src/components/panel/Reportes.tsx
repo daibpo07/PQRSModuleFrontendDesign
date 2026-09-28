@@ -1,4 +1,5 @@
 import { useState } from "react"
+import EstimacionModal from "./EstimacionModal"
 import {
   formatoMeta,
   modulos,
@@ -394,10 +395,12 @@ function ConstructorReporte({
 /* ─────────────────────────────────────────────
    Subvista Reportes
 ───────────────────────────────────────────── */
-export default function Reportes() {
+export default function Reportes({ onProgramar }: { onProgramar: (r: Reporte) => void }) {
   const [lista, setLista] = useState<Reporte[]>(reportesIniciales)
   const [filtro, setFiltro] = useState<"Todos" | ModuloId | "transversal">("Todos")
   const [constructor, setConstructor] = useState(false)
+  /* Ningún reporte se descarga sin que antes se vea cuánto pesa */
+  const [estimando, setEstimando] = useState<Reporte | null>(null)
 
   const visibles = filtro === "Todos" ? lista : lista.filter(r => r.modulo === filtro)
   const programados = lista.filter(r => r.activo).length
@@ -540,6 +543,7 @@ export default function Reportes() {
 
                 <div className="flex items-center gap-1.5 shrink-0">
                   <button
+                    onClick={() => setEstimando(r)}
                     className="px-3 py-1.5 rounded-lg text-[11px] font-semibold text-white transition-all cursor-pointer"
                     style={{ background: "#1E3A8A" }}
                   >
@@ -585,6 +589,17 @@ export default function Reportes() {
           aparecen automáticamente como origen disponible en el constructor.
         </p>
       </div>
+
+      {estimando && (
+        <EstimacionModal
+          reporte={estimando}
+          onClose={() => setEstimando(null)}
+          onProgramar={r => {
+            setEstimando(null)
+            onProgramar(r)
+          }}
+        />
+      )}
 
       {constructor && (
         <ConstructorReporte
