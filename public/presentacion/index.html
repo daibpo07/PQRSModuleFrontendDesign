@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>ConceptOS · Ecosistema modular</title>
+  <meta name="description" content="Presentación interactiva de los ocho módulos de ConceptOS: cinco en producción y tres proyectados.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chivo:wght@700;800;900&family=IBM+Plex+Mono:wght@500;600&family=Inter:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="./css/estilos.css">
+
+  <script src="./vendor/gsap.min.js"></script>
+  <script type="importmap">
+    { "imports": { "three": "./vendor/three.module.js" } }
+  </script>
+  <script type="module" src="./js/main.js"></script>
+</head>
+
+<body data-seccion="portada">
+  <canvas id="fondo-3d" aria-hidden="true"></canvas>
+
+  <header class="barra">
+    <a class="sello" href="#portada" data-ir-seccion="portada">
+      <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
+        <circle cx="24" cy="24" r="21" stroke="#0476D9" stroke-width="1.4" opacity=".55"/>
+        <circle cx="24" cy="24" r="13" stroke="#04B2D9" stroke-width="1.6"/>
+        <circle cx="24" cy="24" r="5" fill="#04B2D9"/>
+        <circle cx="24" cy="3" r="3.1" fill="#0476D9"/>
+        <circle cx="42" cy="34" r="3.1" fill="#04B2D9"/>
+        <circle cx="6" cy="34" r="3.1" fill="#4BA658"/>
+      </svg>
+      <span>Concept<b>OS</b></span>
+    </a>
+    <span class="indicador">01 · Portada</span>
+    <button class="boton-pantalla" type="button" title="Pantalla completa (F)" aria-label="Pantalla completa">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true">
+        <path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>
+      </svg>
+    </button>
+  </header>
+
+  <nav class="navegacion" aria-label="Secciones">
+    <button class="punto-nav" type="button" aria-current="true"><span></span>Portada</button>
+    <button class="punto-nav" type="button" aria-current="false"><span></span>Ecosistema</button>
+    <button class="punto-nav" type="button" aria-current="false"><span></span>Hitos</button>
+    <button class="punto-nav" type="button" aria-current="false"><span></span>Cierre</button>
+  </nav>
+
+  <main id="escenario">
+
+    <!-- ───────────── Portada ───────────── -->
+    <section class="seccion portada" id="portada" data-titulo="Portada">
+      <div class="contenido portada-contenido">
+        <p class="sobrenombre" data-entra>Plataforma modular de atención y operación</p>
+        <h1 class="titular" data-entra>Concept<b>OS</b></h1>
+        <p class="lema" data-entra>Ocho módulos que operan como un solo organismo.</p>
+        <p class="bajada" data-entra>
+          Lo que entra por un canal queda disponible en todos los demás: una respuesta a una campaña abre una
+          conversación, un crédito desembolsado dispara una encuesta, una mora detectada lanza un preventivo de pago.
+        </p>
+        <div class="acciones" data-entra>
+          <button class="boton principal" type="button" data-ir-seccion="ecosistema">Explorar el ecosistema</button>
+          <button class="boton" type="button" data-ir-seccion="hitos">Ver los hitos</button>
+        </div>
+        <dl class="cifras" data-entra>
+          <div class="cifra produccion">
+            <dt>En producción</dt>
+            <dd>5<span>módulos · Hito 1</span></dd>
+          </div>
+          <div class="cifra proyectado">
+            <dt>Proyectado</dt>
+            <dd>3<span>módulos · Hito 2</span></dd>
+          </div>
+        </dl>
+      </div>
+      <p class="teclas" data-entra>Flechas para avanzar · 1 a 8 abre un módulo · F pantalla completa</p>
+    </section>
+
+    <!-- ───────────── Ecosistema ───────────── -->
+    <section class="seccion ecosistema" id="ecosistema" data-titulo="Ecosistema">
+      <div class="contenido ancho">
+        <header class="cabecera-seccion">
+          <div data-entra>
+            <p class="sobrenombre">El mapa</p>
+            <h2>Ocho módulos, un solo organismo</h2>
+          </div>
+          <div class="filtros" role="group" aria-label="Filtrar módulos" data-entra>
+            <button class="filtro" type="button" data-filtro="todos" aria-pressed="true"><span class="chispa doble"></span>Todos</button>
+            <button class="filtro" type="button" data-filtro="produccion" aria-pressed="false"><span class="chispa cian"></span>En producción</button>
+            <button class="filtro" type="button" data-filtro="proyectado" aria-pressed="false"><span class="chispa verde"></span>Proyectado</button>
+          </div>
+        </header>
+
+        <div class="tablero">
+          <div class="mapa" id="mapa" data-enfocado="no" data-entra>
+            <div class="lienzo">
+              <svg class="hilos" viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true"></svg>
+              <button class="nucleo" type="button" aria-label="Ver el ecosistema completo">
+                <span class="nombre">Concept<b>OS</b></span>
+                <span class="pie">Núcleo</span>
+              </button>
+            </div>
+            <div class="lista-modulos"></div>
+          </div>
+
+          <section class="ficha" id="ficha" aria-live="polite"></section>
+        </div>
+      </div>
+    </section>
+
+    <!-- ───────────── Hitos ───────────── -->
+    <section class="seccion hitos" id="hitos" data-titulo="Hitos">
+      <div class="contenido ancho">
+        <header class="cabecera-seccion">
+          <div data-entra>
+            <p class="sobrenombre">La ruta</p>
+            <h2>Lo que ya opera y lo que viene</h2>
+          </div>
+          <p class="nota-seccion" data-entra>Haz clic en cualquier módulo para abrir su ficha en el mapa.</p>
+        </header>
+
+        <div class="carriles">
+          <article class="carril produccion" data-entra>
+            <header>
+              <span class="insignia produccion"><span class="chispa"></span>Hito 1 · En producción</span>
+              <h3>El MVP ya está operando</h3>
+              <p>Los cinco módulos que hoy sostienen la atención del ciudadano, de la radicación al tablero gerencial.</p>
+            </header>
+            <ul>
+              <li><button type="button" data-abre="pqrsf"><b>PQRSDF</b><span>Radicación multicanal, formularios propios y SLA por categoría</span></button></li>
+              <li><button type="button" data-abre="individuales"><b>Envíos Individuales</b><span>Bandeja omnicanal con plantillas y transferencias</span></button></li>
+              <li><button type="button" data-abre="masivos"><b>Envíos Masivos</b><span>Campañas con consola en vivo e informe de resultados</span></button></li>
+              <li><button type="button" data-abre="flujos"><b>Flujos de Trabajo</b><span>Rutas con responsables, SLA y cargas del equipo</span></button></li>
+              <li><button type="button" data-abre="dashboard"><b>Dashboard &amp; Panel 360°</b><span>Indicadores, metas, reportes y ficha del cliente</span></button></li>
+            </ul>
+          </article>
+
+          <article class="carril proyectado" data-entra>
+            <header>
+              <span class="insignia proyectado"><span class="chispa"></span>Hito 2 · Proyectado</span>
+              <h3>Lo que completa el ecosistema</h3>
+              <p>Alcance definido y pendiente de diseño. Cada uno se apoya en los módulos que ya están en producción.</p>
+            </header>
+            <ul>
+              <li><button type="button" data-abre="comercial"><b>Gestión Comercial</b><span>Originación y conversión, de la captura a la firma</span></button></li>
+              <li><button type="button" data-abre="cobranza"><b>Cobranza y Jurídica</b><span>Del cobro preventivo al expediente jurídico</span></button></li>
+              <li><button type="button" data-abre="conocimiento"><b>Base de Conocimiento</b><span>Repositorio con buscador semántico para toda la empresa</span></button></li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ───────────── Cierre ───────────── -->
+    <section class="seccion cierre" id="cierre" data-titulo="Cierre">
+      <div class="contenido portada-contenido">
+        <p class="sobrenombre" data-entra>Una sola plataforma</p>
+        <h2 class="titular pequeno" data-entra>Cada organización, con los módulos que necesita</h2>
+        <p class="bajada" data-entra>
+          Los módulos se contratan por separado y comparten la misma información del cliente. Por eso el Dashboard
+          puede mostrar el ciclo de vida completo de una persona: por dónde entró, quién la atendió, qué tiene
+          contratado y qué ha radicado.
+        </p>
+        <div class="acciones" data-entra>
+          <button class="boton principal" type="button" data-ir-seccion="ecosistema">Volver al mapa</button>
+          <button class="boton" type="button" data-ir-seccion="portada">Ir al inicio</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</body>
+</html>
