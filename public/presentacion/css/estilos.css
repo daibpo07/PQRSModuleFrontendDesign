@@ -265,6 +265,52 @@ body {
 }
 @media (max-width: 720px) { .teclas { display: none; } }
 
+/* ───────── Portada: el titular a un lado, el planteamiento al otro ───────── */
+
+.portada .contenido { max-width: 1260px; }
+.portada .portada-contenido {
+  display: grid;
+  gap: clamp(26px, 3.4vw, 58px);
+  align-items: center;
+}
+@media (min-width: 920px) {
+  .portada .portada-contenido { grid-template-columns: minmax(0, 1fr) minmax(0, 0.95fr); }
+}
+
+.manifiesto {
+  position: relative;
+  margin: 0;
+  border: 1px solid var(--linea);
+  border-radius: 18px;
+  background: var(--superficie);
+  padding: clamp(20px, 2.2vw, 28px) clamp(20px, 2.2vw, 30px);
+  overflow: hidden;
+}
+/* Filo de color: cian arriba, verde abajo, los dos hitos del producto */
+.manifiesto::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  background: linear-gradient(180deg, var(--cian), var(--verde));
+  opacity: 0.85;
+}
+.manifiesto .sobrenombre { margin-bottom: 12px; }
+.manifiesto p:not(.sobrenombre) {
+  margin: 0;
+  color: var(--texto-medio);
+  font-size: clamp(13.5px, 1.04vw, 15px);
+  line-height: 1.66;
+  text-wrap: pretty;
+}
+.manifiesto p:not(.sobrenombre) + p { margin-top: 13px; }
+.manifiesto b { color: var(--texto); font-weight: 600; }
+
+/* Donde la portada no cabe entera, el ajuste deja de ser obligatorio para poder leerla */
+@media (max-width: 919px), (max-height: 700px) {
+  #escenario { scroll-snap-type: y proximity; }
+}
+
 .cabecera-seccion {
   display: flex;
   flex-wrap: wrap;
