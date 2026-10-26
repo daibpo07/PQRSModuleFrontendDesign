@@ -15,6 +15,7 @@ const pageTitles: Partial<Record<View, string>> = {
   masivos: "Envíos Masivos",
   flujos: "Flujos de Trabajo",
   usuarios: "Usuarios",
+  cobranza: "Cobranza y Jurídica",
 }
 
 export default function Header({
